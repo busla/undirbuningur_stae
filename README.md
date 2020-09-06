@@ -2,7 +2,8 @@
 
 This is a template for a web-based textbook/lecture notes for the University of Iceland's mathematics department, using sphinx (see sphinx-doc.org).
 
-For ubuntu based distors run the following commands in the terminal:
+## Install without virtualenv
+For ubuntu based distros run the following commands in the terminal:
 
 ```bash
 sudo apt-get install python3-sphinx
@@ -26,6 +27,14 @@ In each of these folders run the following commands:
 python3 setup.py build
 sudo python3 setup.py install
 ```
+## Install with virtualenv
+```
+python3 -m venv venv
+source venv/bin/activate
+pip install -U pip
+pip install -r requirements
+```
+## Build html
 Finally, go to the template folder and run the command:
 ```bash
 make html
