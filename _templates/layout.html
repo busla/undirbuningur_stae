@@ -13,7 +13,29 @@
 
 	</script>
 	<script type="text/javascript" src="https://cdn.geogebra.org/apps/deployggb.js"></script>
-	<script>ggbAppletId = []; </script>
+	
+	<script type="text/javascript" src="https://sagecell.sagemath.org/static/embedded_sagecell.js"></script>  
+
+  <script> 
+  // the buttonText string says what will be written on the 
+  // sage cell evaluation button.
+  // It can be changed here.
+  var buttonText = "Keyra"
+  </script>
+    
+	<script type="text/javascript">
+    sagecell.makeSagecell({inputLocation: ".sage", evalButtonText:buttonText});
+    sagecell.makeSagecell({inputLocation: ".rsage", languages:["r"], evalButtonText: buttonText });
+    sagecell.makeSagecell({inputLocation: ".osage", languages:["octave"], evalButtonText: buttonText});
+    sagecell.makeSagecell({inputLocation: ".sageAuto", evalButtonText:buttonText, autoeval: true});
+    sagecell.makeSagecell({inputLocation: ".rsageAuto", languages:["r"], evalButtonText: buttonText, autoeval: true});
+    sagecell.makeSagecell({inputLocation: ".osageAuto", languages:["octave"], evalButtonText: buttonText, autoeval: true});
+    sagecell.makeSagecell({inputLocation: ".sageAutoHidden", evalButtonText :buttonText, autoeval: true, hide: ["evalButton"], template: sagecell.templates.minimal});
+    sagecell.makeSagecell({inputLocation: ".rsageAutoHidden", languages:["r"], evalButtonText: buttonText, autoeval: true, hide: ["evalButton"], template: sagecell.templates.minimal});
+    sagecell.makeSagecell({inputLocation: ".osageAutoHidden", languages:["octave"], evalButtonText:buttonText, autoeval: true, hide: ["evalButton"], template: sagecell.templates.minimal});
+  </script>  
+	
+  <script>ggbAppletId = []; </script>
     <script>top.scrolldepth_tags = []; </script>
 
     {{ super() }}
@@ -42,33 +64,6 @@
 		    box-shadow: 5px 5px 8px #CCC;
 		}
 	</style>
-
-
-    <script> 
-    // the buttonText string says what will be written on the 
-    // sage cell evaluation button.
-    // It can be changed here.
-    var buttonText = "Keyra"
-    </script>
-    
-	<script>sagecell.makeSagecell({inputLocation: ".sage", evalButtonText:buttonText});</script>
-    
-    <script>sagecell.makeSagecell({inputLocation: ".rsage", languages:["r"], evalButtonText: buttonText });</script>
-
-    <script>sagecell.makeSagecell({inputLocation: ".osage", languages:["octave"], evalButtonText: buttonText});</script>
-
-	<script>sagecell.makeSagecell({inputLocation: ".sageAuto", evalButtonText:buttonText, autoeval: true});</script>
-    
-    <script>sagecell.makeSagecell({inputLocation: ".rsageAuto", languages:["r"], evalButtonText: buttonText, autoeval: true});</script>
-
-    <script>sagecell.makeSagecell({inputLocation: ".osageAuto", languages:["octave"], evalButtonText: buttonText, autoeval: true});</script>
-	
-    <script>sagecell.makeSagecell({inputLocation: ".sageAutoHidden", evalButtonText :buttonText, autoeval: true, hide: ["evalButton"], template: sagecell.templates.minimal});</script>
-    
-    <script>sagecell.makeSagecell({inputLocation: ".rsageAutoHidden", languages:["r"], evalButtonText: buttonText, autoeval: true, hide: ["evalButton"], template: sagecell.templates.minimal});</script>
-
-    <script>sagecell.makeSagecell({inputLocation: ".osageAutoHidden", languages:["octave"], evalButtonText:buttonText, autoeval: true, hide: ["evalButton"], template: sagecell.templates.minimal});</script>
-
 
 	<style type="text/css">
 		.sagecell .CodeMirror-scroll {

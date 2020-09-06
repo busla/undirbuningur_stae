@@ -48,7 +48,7 @@ extensions = [
     'toggleblock.toggleBlock',
     # Extension for toggleable blocks of text (click to show/hide).
     # See README.txt in toggleblock-extension folder.
-    # 'sagecell.sagecell',
+    'sagecell.sagecell',
     # Extension for embedding sage cells (https://sagecell.sagemath.org/).
     # See README.txt in sagecell-extension folder.
     'hoverrole.hoverrole',
