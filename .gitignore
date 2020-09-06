@@ -1,1 +1,5 @@
 # We should ignore everything in this directory
+*.egg
+__pycache__/
+.vscode
+.python-version
