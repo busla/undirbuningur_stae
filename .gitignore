@@ -1,5 +1,19 @@
 # We should ignore everything in this directory
-*.egg
 __pycache__/
+*.py[cod]
+
+bin/
+build/
+develop-eggs/
+dist/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+__pycache__
 .vscode
 .python-version
