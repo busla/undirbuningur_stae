@@ -41,6 +41,12 @@ make html
 ```
 You can now edit the template in /template/chapter01.rst and compile the html file with the make html command. The html pages are in /template/_build/html.
 
+You might want to debug this properly by loading the `_build/html/index.html` through a webserver.
+
+```
+python3 -m http.server 8000
+```
+
 Sphinx
 ======
 Information on how to install sphinx can be found here: http://sphinx-doc.org/latest/install.html
