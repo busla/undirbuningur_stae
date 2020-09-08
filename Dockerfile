@@ -6,4 +6,4 @@ COPY . .
 RUN pip install -U pip
 RUN pip install -r requirements.txt
 RUN make html
-ENTRYPOINT [ "python", "-m", "http.server", "8000", "--directory", "/app/_build/html" ] 
+CMD python -m http.server $PORT --directory /app/_build/html 
