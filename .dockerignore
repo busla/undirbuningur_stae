@@ -1,0 +1,12 @@
+.python-version
+.gitignore
+.git
+.vscode
+__pycache__
+.mypy_cache
+_build
+make.bat
+*.zip
+README.md
+t.html
+
