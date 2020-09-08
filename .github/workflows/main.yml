@@ -1,6 +1,10 @@
+
 name: Push Container to Heroku
 
-on: [push]
+on: 
+  push:
+    branches:
+      - docker-integration
 
 jobs:
   build:
