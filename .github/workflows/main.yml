@@ -7,8 +7,8 @@ on:
       - docker-integration
 
 jobs:
-  Build and sftp:
-    name: SFTP build deploy
+  SFTP-Deploy-Action:
+    name: SFTP-Deploy-Action
     runs-on: ubuntu-latest
     strategy:
       matrix:
