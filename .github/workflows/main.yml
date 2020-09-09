@@ -25,10 +25,6 @@ jobs:
         pip install -r requirements.txt
     - name: Make build
       run: make html && ls _build
+
     - name: upload
-      uses: SamKirkland/FTP-Deploy-Action@3.1.1
-      with:
-        ftp-server: ftp://${{ secrets.HI_FTP_HOST }}/undirbuningur_stae/
-        ftp-username: ${{ secrets.HI_FTP_USER }}
-        ftp-password: ${{ secrets.HI_FTP_PASSWORD }}
-        local-dir: _build/html/
+      run: python .deployment/main.py --user ${{ secrets.HI_FTP_USER }} --password ${{ secrets.HI_FTP_PASSWORD }} --dir "../_build/html"
