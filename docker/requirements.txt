@@ -1,0 +1,10 @@
+pypandoc==1.5
+Sphinx==3.2.1
+sphinx-rtd-theme==0.5.0
+sphinxcontrib-katex==0.6.1
+-e ./panoptoextension
+-e ./sagecell-extension
+-e ./ggbextension
+-e ./SphinxScrolldepth
+-e ./hoverrole
+-e ./toggleblock-extension
