@@ -28,7 +28,7 @@ jobs:
     - name: upload
       uses: SamKirkland/FTP-Deploy-Action@3.1.1
       with:
-        ftp-server: ftp://${{ secrets.HI_FTP_HOST }}
+        ftp-server: ftp://${{ secrets.HI_FTP_HOST }}/undirbuningur_stae/
         ftp-username: ${{ secrets.HI_FTP_USER }}
         ftp-password: ${{ secrets.HI_FTP_PASSWORD }}
-        local-dir: _build
+        local-dir: _build/html/
