@@ -1,5 +1,6 @@
 # We should ignore everything in this directory
 __pycache__/
+*.pyc
 *.py[cod]
 
 bin/
