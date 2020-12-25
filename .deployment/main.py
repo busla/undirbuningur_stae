@@ -105,7 +105,7 @@ if __name__ == "__main__":
     parser.add_argument("--user", required=True)
     parser.add_argument("--password", required=True)
     parser.add_argument("--host", default="katla.rhi.hi.is")
-    parser.add_argument("--destination")
+    parser.add_argument("--destination", default=".public/undirbuningur_stae")
     args = parser.parse_args()
 
     main(args)

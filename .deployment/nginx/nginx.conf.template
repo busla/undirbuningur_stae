@@ -6,7 +6,7 @@ http {
     sendfile on;
     include mime.types;
     server {
-        listen ${PORT};        
+        listen ${PORT};
         index index.html;
         gzip_min_length     1000;
         gzip_buffers        4 8k;
@@ -30,7 +30,7 @@ http {
         add_header X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
         location / {
           root /var/www;
-          index index.html;            
+          index index.html;
         }
     }
 }
