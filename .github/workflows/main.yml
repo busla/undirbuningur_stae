@@ -1,7 +1,7 @@
 
 name: Build sphinx docs and upload with sftp
 
-on: 
+on:
   push:
     branches:
       - docker-integration
@@ -12,9 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8]    
+        python-version: [3.8]
     steps:
-    - uses: actions/checkout@v2.1.0    
+    - uses: actions/checkout@v2.1.0
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
