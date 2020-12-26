@@ -1,0 +1,36 @@
+worker_processes 1;
+
+events { worker_connections 1024; }
+
+http {
+    sendfile on;
+    include mime.types;
+    server {
+        listen ${PORT};
+        index index.html;
+        gzip_min_length     1000;
+        gzip_buffers        4 8k;
+        gzip_http_version   1.0;
+        gzip_disable        "msie6";
+        gzip on;
+        gzip_proxied any;
+        gzip_types
+            text/css
+            text/javascript
+            text/xml
+            text/plain
+            application/javascript
+            application/x-javascript
+            application/json;
+        gzip_vary           on;
+        keepalive_timeout 5;
+        server_name web;
+        charset utf-8;
+        client_max_body_size 10M;
+        add_header X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
+        location / {
+          root /var/www;
+          index index.html;
+        }
+    }
+}
