@@ -4,6 +4,7 @@ name: Build sphinx docs and upload with sftp
 on:
   pull_request:
     branches: [ $default-branch ]
+  push:
 jobs:
   SFTP-Deploy-Action:
     name: SFTP-Deploy-Action
