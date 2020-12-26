@@ -11,6 +11,9 @@ HI_USERNAME=notandanafn án @hi.is
 HI_PASSWORD=pass
 ```
 
+## Install Poetry
+Sjá [Poetry docs](https://python-poetry.org/docs/#installation)
+
 
 ## Skipanir
 **Setja upp pakka á localhost**
