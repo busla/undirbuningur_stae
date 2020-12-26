@@ -39,25 +39,17 @@ poetry update
 poetry run hicli build
 ```
 
-
 **Lista upp möppur og skrár á notandasvæði**
 ```sh
 poetry run hicli server list --remote-dir .public_html
 ```
-
-
-
-**Lista upp möppur og skrár á notandasvæði**
-```sh
-poetry run hicli server list --remote-dir .public_html
-```
+![tree view](https://www.dropbox.com/s/yplhpvltuetizi9/2020-12-26_15-19.png?raw=1)
 
 
 **Eyða öllum möppum og skrám frá rótarmöppu**
 ```sh
 poetry run hicli server delete --remote-dir .public_html/einhver-mappa
 ```
-
 
 
 **Afrita build möppu á notandasvæði**
