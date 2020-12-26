@@ -34,7 +34,7 @@ jobs:
         poetry install
 
     - name: Build
-      run: poetry run hcli build
+      run: poetry run hicli build
 
     - name: List remote files
       run: poetry run hicli server list --remote-dir .public-html
