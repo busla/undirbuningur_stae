@@ -16,3 +16,15 @@ poetry install
 ```sh
 poetry update
 ```
+
+
+**Keyra build**
+```sh
+poetry run hicli build
+```
+
+
+**Lista upp möppur og skrár á notandasvæði**
+```sh
+poetry run hicli server list --remote-dir .public_html
+```

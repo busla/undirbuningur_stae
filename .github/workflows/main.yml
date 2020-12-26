@@ -10,9 +10,6 @@ jobs:
   SFTP-Deploy-Action:
     name: SFTP-Deploy-Action
     runs-on: ubuntu-latest
-    env:
-      HI_USERNAME: ${{ secrets.HI_FTP_USER }}
-      HI_PASSWORD: ${{ secrets.HI_FTP_PASSWORD }}
     defaults:
       run:
         working-directory: hi-cli
@@ -21,8 +18,9 @@ jobs:
         python-version: [3.8]
     steps:
     - uses: actions/checkout@v2.1.0
-      with:
-        envs: HI_USERNAME,HI_PASSWORD
+      env:
+        HI_USERNAME: ${{ secrets.HI_FTP_USER }}
+        HI_PASSWORD: ${{ secrets.HI_FTP_PASSWORD }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
