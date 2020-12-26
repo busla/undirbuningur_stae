@@ -16,6 +16,9 @@ jobs:
     strategy:
       matrix:
         python-version: [3.8]
+    env:
+      HI_USERNAME: ${{ secrets.HI_FTP_USER }}
+      HI_PASSWORD: ${{ secrets.HI_FTP_PASSWORD }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -33,9 +36,6 @@ jobs:
       run: poetry run hicli build
 
     - name: List remote files
-      env:
-        HI_USERNAME: ${{ secrets.HI_FTP_USER }}
-        HI_PASSWORD: ${{ secrets.HI_FTP_PASSWORD }}
       run: poetry run hicli server list --remote-dir .public-html
 
     - name: Trash remote files

@@ -96,7 +96,7 @@ def get_connection(host: str, username: str, password: str, port: int = 22):
     msg_info(f"connecting to {host} ...")
     host, port = host, 22
     transport = paramiko.Transport((host, port))
-    transport.connect(None, username, password)
+    transport.connect(None, username, password, timeout=2 * 60)
 
     sftp = SFTPClient.from_transport(transport)
     msg_success(f"successfully connected to {host} ...")
@@ -107,8 +107,9 @@ def list_files(sftp: SFTPClient, root_dir: str, tree: FakeDir) -> FakeDir:
     """
     Recursively list all remote files from root dir
     """
-    files = sftp.listdir(root_dir)
-    if not files:
+    try:
+        files = sftp.listdir(root_dir)
+    except FileNotFoundError as e:
         msg_error(f"No files found in {root_dir}")
         raise typer.Exit()
     else:
