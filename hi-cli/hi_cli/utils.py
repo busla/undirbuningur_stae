@@ -10,6 +10,7 @@ from seedir import FakeDir
 class SFTPHosts(str, Enum):
     hekla = "hekla.rhi.hi.is"
     katla = "katla.rhi.hi.is"
+    krafla = "krafla.rhi.hi.is"
 
 
 def msg_debug(msg: str):
