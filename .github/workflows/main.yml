@@ -2,8 +2,6 @@
 name: Build sphinx docs and upload with sftp
 
 on:
-  pull_request:
-    branches: [ $default-branch ]
   push:
 jobs:
   SFTP-Deploy-Action:
@@ -26,6 +24,10 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Extract branch name
+      shell: bash
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: extract_branch
 
     - name: Install dependencies
       run: |
@@ -40,7 +42,11 @@ jobs:
       run: poetry run hicli server --host krafla.rhi.hi.is list --remote-dir .public-html
 
     - name: Trash remote files
-      run: poetry run hicli server --host krafla.rhi.hi.is delete --remote-dir .public_html/staging/edbook
+      env:
+        BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
+      run: poetry run hicli server --host krafla.rhi.hi.is delete --remote-dir .public_html/staging/edbook/${BRANCH_NAME}
 
     - name: Copy build dir to remote server
-      run: poetry run hicli server --host krafla.rhi.hi.is copy --local-dir ../_build --remote-dir .public_html/staging/edbook
+      env:
+        BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
+      run: poetry run hicli server --host krafla.rhi.hi.is copy --local-dir ../_build --remote-dir .public_html/staging/edbook/${BRANCH_NAME}
