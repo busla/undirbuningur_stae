@@ -1,9 +1,10 @@
 import logging
+from os import name
 
 import typer
 from seedir import FakeDir
 
-from .utils import SFTPHosts, get_connection, list_files, remove_files
+from .utils import SFTPHosts, get_connection, list_files, delete_files
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -14,19 +15,18 @@ app = typer.Typer()
 @app.command("delete")
 def cmd_delete(
     ctx: typer.Context,
-    remote_dir: str = typer.Argument(..., help="Remote directory."),
+    remote_dir: str = typer.Option(..., help="Remote directory."),
 ):
     """
     Delete all files in remote dir.
     """
-    remove_files(ctx.obj["sftp"], remote_dir)
-    typer.echo(f"purge params {ctx.obj}")
+    delete_files(ctx.obj["sftp"], remote_dir)
 
 
 @app.command("list")
 def cmd_list(
     ctx: typer.Context,
-    remote_dir: str = typer.Argument(".public_html", help="Remote directory."),
+    remote_dir: str = typer.Option(..., help="Remote directory."),
 ):
     """
     Delete all files in remote dir.
@@ -38,12 +38,11 @@ def cmd_list(
 @app.command("copy")
 def cmd_copy(
     ctx: typer.Context,
-    local_dir: str = typer.Argument("../_build", help="Local directory."),
-    remote_dir: str = typer.Argument(
-        ".public_html/edbook", help="Remote root directory."
-    ),
+    local_dir: str = typer.Option("../_build", help="Local directory."),
+    remote_dir: str = typer.Option(..., help="Remote root directory."),
 ):
     """
+    TODO: Add remote cleanup option
     Copy files from local dir to remote dir.
     """
     sftp = ctx.obj["sftp"]
@@ -73,7 +72,6 @@ def main(
     """
     Create sftp connection
     """
-    typer.echo(f"About to execute command: {ctx.invoked_subcommand}")
     sftp, _ = get_connection(host, username, password)
     ctx.ensure_object(dict)
     ctx.obj["sftp"] = sftp

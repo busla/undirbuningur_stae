@@ -65,11 +65,21 @@ class SFTPClient(ParamikoSFTPClient):
         created under target.
         """
         for item in os.listdir(source):
+            root_dir = target.split("/")[0]
+            try:
+                # Validate that the root dir exists
+                self.lstat(root_dir)
+            except (FileNotFoundError):
+                msg_warning(f"Root dir {root_dir} not found, creating ...")
+                self.mkdir("%s" % (root_dir), ignore_existing=True)
+                msg_info(f"Created {root_dir}!")
             if os.path.isfile(os.path.join(source, item)):
                 self.put(os.path.join(source, item), "%s/%s" % (target, item))
+                msg_success(f"Copied local file to remote {target}/{item}")
             else:
                 self.mkdir("%s/%s" % (target, item), ignore_existing=True)
                 self.put_dir(os.path.join(source, item), "%s/%s" % (target, item))
+                msg_info(f"Created remote dir {target}/{item}")
 
     def mkdir(self, path, mode=511, ignore_existing=False):
         """ Augments mkdir by adding an option to not fail if the folder exists  """
@@ -115,6 +125,7 @@ def list_files(sftp: SFTPClient, root_dir: str, tree: FakeDir) -> FakeDir:
 
 def delete_files(sftp: SFTPClient, remote_dir: str):
     """
+    TODO: Add as a method to SFTPClient
     Recursively purge all files and directories from root dir
     """
     try:
@@ -122,15 +133,12 @@ def delete_files(sftp: SFTPClient, remote_dir: str):
     except FileNotFoundError:
         msg_error(f"{remote_dir} was not found on remote, skipping..")
     else:
-        msg_info(f"files to be deleted: {files}")
         for f in files:
             filepath = os.path.join(remote_dir, f)
             try:
-                msg_warning(f"deleting remote file {filepath}")
                 sftp.remove(filepath)
                 msg_success(f"successfully deleted remote file {filepath}")
             except IOError:
                 delete_files(sftp, filepath)
-        msg_warning(f"deleting remote {remote_dir} dir...")
         sftp.rmdir(remote_dir)
-        msg_success(f"successfully deleted remote {remote_dir} dir")
+        msg_success(f"successfully deleted remote dir {remote_dir}")
