@@ -10,6 +10,9 @@ jobs:
   SFTP-Deploy-Action:
     name: SFTP-Deploy-Action
     runs-on: ubuntu-latest
+    env:
+      HI_USERNAME: ${{ secrets.HI_FTP_USER }}
+      HI_PASSWORD: ${{ secrets.HI_FTP_PASSWORD }}
     defaults:
       run:
         working-directory: hi-cli
@@ -18,7 +21,8 @@ jobs:
         python-version: [3.8]
     steps:
     - uses: actions/checkout@v2.1.0
-
+      with:
+        envs: HI_USERNAME,HI_PASSWORD
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
@@ -35,16 +39,9 @@ jobs:
 
     - name: List remote files
       run: poetry run hicli server list --remote-dir .public-html
-      env:
-        HI_USERNAME: ${{ secrets.HI_FTP_USER }}
-        HI_PASSWORD: ${{ secrets.HI_FTP_PASSWORD }}
+
     - name: Trash remote files
       run: poetry run hicli server delete .public_html/edbook
-      env:
-        HI_USERNAME: ${{ secrets.HI_FTP_USER }}
-        HI_PASSWORD: ${{ secrets.HI_FTP_PASSWORD }}
+
     - name: Copy build dir to remote server
       run: poetry run hicli server copy ../_build .public_html
-      env:
-        HI_USERNAME: ${{ secrets.HI_FTP_USER }}
-        HI_PASSWORD: ${{ secrets.HI_FTP_PASSWORD }}
