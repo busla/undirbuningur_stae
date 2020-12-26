@@ -19,6 +19,12 @@ poetry install
 ```
 
 
+**Skoða dependency tré**
+```sh
+poetry show --tree
+```
+
+
 **Uppfæra pakka á localhost**
 ```sh
 poetry update
