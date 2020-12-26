@@ -1,25 +1,23 @@
 
-name: Build sphinx docs and upload with sftp
+name: Edbook-staging
 on:
   push:
+    paths-ignore:
+      - "**/README.md"
+    branches-ignore:
+      - "master"
 jobs:
-  Edbook-deploy:
-    environment:
-      name: staging
-      url: https://notendur.hi.is/jlg2/staging/edbook/${{ steps.extract_branch.outputs.branch }}
-    name: Edbook-deploy
+  Edbook-CI:
+    env:
+      DEFAULT_BRANCH: master
+    name: Edbook-CI
     runs-on: ubuntu-latest
-    timeout-minutes: 30
     defaults:
       run:
         working-directory: hi-cli
     strategy:
       matrix:
         python-version: [3.8]
-    env:
-      HI_USERNAME: ${{ secrets.HI_FTP_USER }}
-      HI_PASSWORD: ${{ secrets.HI_FTP_PASSWORD }}
-      DEFAULT_BRANCH: master
     steps:
     - uses: actions/checkout@v2
 
@@ -32,7 +30,7 @@ jobs:
     - name: Extract branch name
       id: extract_branch
       shell: bash
-      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      run: echo "::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/})"
 
     - name: Install dependencies
       id: install_dependencies
@@ -45,10 +43,24 @@ jobs:
       id: build
       run: poetry run hicli build
 
-    - name: Trash remote files
-      id: remote_cleanup
-      run: poetry run hicli server --host krafla.rhi.hi.is delete --remote-dir .public_html/staging/edbook/${{ steps.extract_branch.outputs.branch }}
+    - name: Cleanup and deploy feature branch
+      env:
+        HI_USERNAME: ${{ secrets.STAGING_HI_USERNAME }}
+        HI_PASSWORD: ${{ secrets.STAGING_HI_PASSWORD }}
+        ENVIRONMENT_URL: ${{ secrets.STAGING_ENVIRONMENT_URL }}
+      id: cleanup_deploy_feature
+      if: ${{ steps.extract_branch.outputs.branch != 'master' }}
+      run: |
+        poetry run hicli server --host krafla.rhi.hi.is delete --remote-dir .public_html/staging/edbook/${{ steps.extract_branch.outputs.branch }}
+        poetry run hicli server --host krafla.rhi.hi.is copy --local-dir ../_build --remote-dir .public_html/staging/edbook/${{ steps.extract_branch.outputs.branch }}
 
-    - name: Copy build dir to remote server
-      id: deploy
-      run: poetry run hicli server --host krafla.rhi.hi.is copy --local-dir ../_build --remote-dir .public_html/staging/edbook/${{ steps.extract_branch.outputs.branch }}
+    - name: Cleanup and deploy production
+      env:
+        HI_USERNAME: ${{ secrets.PRODUCTION_HI_USERNAME }}
+        HI_PASSWORD: ${{ secrets.PRODUCTION_HI_PASSWORD }}
+        ENVIRONMENT_URL: ${{ secrets.PRODUCTION_ENVIRONMENT_URL }}
+      id: cleanup_deploy_production
+      if: ${{ steps.extract_branch.outputs.branch == 'master' }}
+      run: |
+        poetry run hicli server --host krafla.rhi.hi.is delete --remote-dir .public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}
+        poetry run hicli server --host krafla.rhi.hi.is copy --local-dir ../_build --remote-dir .public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}
