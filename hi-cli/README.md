@@ -48,3 +48,10 @@ poetry run hicli server list --remote-dir .public_html
 ```sh
 poetry run hicli server delete --remote-dir .public_html/einhver-mappa
 ```
+
+
+
+**Afrita build möppu á notandasvæði**
+```sh
+poetry run hicli server copy --local-dir ../_build --remote-dir .public_html/einhver-mappa
+```

@@ -42,4 +42,4 @@ jobs:
       run: poetry run hicli server delete .public_html/edbook
 
     - name: Copy build dir to remote server
-      run: poetry run hicli server copy ../_build .public_html
+      run: poetry run hicli server copy --local-dir ../_build --remote-dir .public_html/edbook
