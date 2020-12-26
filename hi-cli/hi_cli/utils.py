@@ -10,6 +10,7 @@ from seedir import FakeDir
 class SFTPHosts(str, Enum):
     hekla = "hekla.rhi.hi.is"
     katla = "katla.rhi.hi.is"
+    krafla = "krafla.rhi.hi.is"
 
 
 def msg_debug(msg: str):
@@ -64,15 +65,10 @@ class SFTPClient(ParamikoSFTPClient):
         target directory needs to exists. All subdirectories in source are
         created under target.
         """
+
+        self.mkdir_target(target.split("/"))
+
         for item in os.listdir(source):
-            root_dir = target.split("/")[0]
-            try:
-                # Validate that the root dir exists
-                self.lstat(root_dir)
-            except (FileNotFoundError):
-                msg_warning(f"Root dir {root_dir} not found, creating ...")
-                self.mkdir("%s" % (root_dir), ignore_existing=True)
-                msg_info(f"Created {root_dir}!")
             if os.path.isfile(os.path.join(source, item)):
                 self.put(os.path.join(source, item), "%s/%s" % (target, item))
                 msg_success(f"Copied local file to remote {target}/{item}")
@@ -80,6 +76,13 @@ class SFTPClient(ParamikoSFTPClient):
                 self.mkdir("%s/%s" % (target, item), ignore_existing=True)
                 self.put_dir(os.path.join(source, item), "%s/%s" % (target, item))
                 msg_info(f"Created remote dir {target}/{item}")
+
+    def mkdir_target(self, path: list):
+        """
+        Util function for creating dir hierarchy from target path
+        """
+        for i, item in enumerate(path, start=1):
+            self.mkdir("/".join(path[:i]), ignore_existing=True)
 
     def mkdir(self, path, mode=511, ignore_existing=False):
         """ Augments mkdir by adding an option to not fail if the folder exists  """

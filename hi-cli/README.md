@@ -11,6 +11,9 @@ HI_USERNAME=notandanafn án @hi.is
 HI_PASSWORD=pass
 ```
 
+## Install Poetry
+Sjá [Poetry docs](https://python-poetry.org/docs/#installation)
+
 
 ## Skipanir
 **Setja upp pakka á localhost**
@@ -36,28 +39,20 @@ poetry update
 poetry run hicli build
 ```
 
-
 **Lista upp möppur og skrár á notandasvæði**
 ```sh
-poetry run hicli server list --remote-dir .public_html
+poetry run hicli server --host krafla.rhi.hi.is list --remote-dir .public-html
 ```
-
-
-
-**Lista upp möppur og skrár á notandasvæði**
-```sh
-poetry run hicli server list --remote-dir .public_html
-```
+![tree view](https://www.dropbox.com/s/yplhpvltuetizi9/2020-12-26_15-19.png?raw=1)
 
 
 **Eyða öllum möppum og skrám frá rótarmöppu**
 ```sh
-poetry run hicli server delete --remote-dir .public_html/einhver-mappa
+poetry run hicli server --host krafla.rhi.hi.is delete --remote-dir .public_html/staging/edbook
 ```
-
 
 
 **Afrita build möppu á notandasvæði**
 ```sh
-poetry run hicli server copy --local-dir ../_build --remote-dir .public_html/einhver-mappa
+poetry run hicli server --host krafla.rhi.hi.is copy --local-dir ../_build --remote-dir .public_html/staging/edbook
 ```

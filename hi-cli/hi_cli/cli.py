@@ -36,5 +36,5 @@ def cmd_build(
     msg_success(f"Done!")
 
 
-if __name__ == "__main__":
+def main():
     app()

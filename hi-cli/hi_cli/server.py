@@ -52,7 +52,7 @@ def cmd_copy(
 
 
 @app.callback()
-def main(
+def connection(
     ctx: typer.Context,
     username: str = typer.Option(
         ...,
@@ -67,7 +67,7 @@ def main(
         envvar="HI_PASSWORD",
         help="If the environment variable does not exist you will be prompted.",
     ),
-    host: SFTPHosts = SFTPHosts.katla,
+    host: SFTPHosts = typer.Option(SFTPHosts.katla, help="sftp remote hostname"),
 ):
     """
     Create sftp connection
@@ -77,5 +77,5 @@ def main(
     ctx.obj["sftp"] = sftp
 
 
-if __name__ == "__main__":
+def main():
     app()
