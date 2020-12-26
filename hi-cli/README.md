@@ -4,6 +4,13 @@ Uppkast að CLI tóli fyrir `notendur.hi.is`. Með því má fá lista yfir skr�
 CLI tólið notar [Poetry](https://python-poetry.org/) sem package manager sem einfaldar uppsetningu og auðveldara verður að uppfæra pakka, þá sérstaklega þar sem [dependabot](https://dependabot.com/) lætur eiganda að Github repo-inu vita þegar uppfærslur eru aðgengilegar.
 
 
+Til að losna við username og password prompt má setja eftirfarandi `env` breytur í umhverfið.
+
+```sh
+HI_USERNAME=notandanafn án @hi.is
+HI_PASSWORD=pass
+```
+
 
 ## Skipanir
 **Setja upp pakka á localhost**
@@ -27,4 +34,17 @@ poetry run hicli build
 **Lista upp möppur og skrár á notandasvæði**
 ```sh
 poetry run hicli server list --remote-dir .public_html
+```
+
+
+
+**Lista upp möppur og skrár á notandasvæði**
+```sh
+poetry run hicli server list --remote-dir .public_html
+```
+
+
+**Eyða öllum möppum og skrám frá rótarmöppu**
+```sh
+poetry run hicli server delete --remote-dir .public_html/einhver-mappa
 ```
