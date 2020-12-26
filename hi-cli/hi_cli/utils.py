@@ -95,7 +95,7 @@ class SFTPClient(ParamikoSFTPClient):
 def get_connection(host: str, username: str, password: str, port: int = 22):
     msg_info(f"connecting to {host} ...")
     transport = paramiko.Transport((host, port))
-    transport.connect(None, username, password, timeout=60)
+    transport.connect(None, username, password)
 
     sftp = SFTPClient.from_transport(transport)
     msg_success(f"successfully connected to {host} ...")
