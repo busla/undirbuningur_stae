@@ -8,6 +8,17 @@ authors = ["Jón Levy <nonni@nonni.cc>"]
 python = "^3.8"
 typer = "^0.3.2"
 seedir = "^0.1.2"
+pypandoc = "^1.5"
+Sphinx= "^3.2.1"
+sphinx-rtd-theme = "^0.5.0"
+sphinxcontrib-katex = "^0.6.1"
+paramiko= "^2.7.2"
+panoptoextension = {path = "../panoptoextension", develop = true}
+sagecell = {path = "../sagecell-extension", develop = true}
+ggbextension = {path = "../ggbextension", develop = true}
+scrolldepthextension = {path = "../SphinxScrolldepth", develop = true}
+hoverroleextension = {path = "../hoverrole", develop = true}
+toggleblock = {path = "../toggleblock-extension", develop = true}
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

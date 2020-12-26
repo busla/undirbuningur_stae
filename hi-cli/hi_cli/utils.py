@@ -1,7 +1,6 @@
 from enum import Enum
 import os
 import stat
-from typing import Optional
 import paramiko
 import typer
 from paramiko.sftp_client import SFTPClient as ParamikoSFTPClient
@@ -114,7 +113,7 @@ def list_files(sftp: SFTPClient, root_dir: str, tree: FakeDir) -> FakeDir:
     return tree
 
 
-def remove_files(sftp: SFTPClient, remote_dir: str):
+def delete_files(sftp: SFTPClient, remote_dir: str):
     """
     Recursively purge all files and directories from root dir
     """
@@ -131,7 +130,7 @@ def remove_files(sftp: SFTPClient, remote_dir: str):
                 sftp.remove(filepath)
                 msg_success(f"successfully deleted remote file {filepath}")
             except IOError:
-                remove_files(sftp, filepath)
+                delete_files(sftp, filepath)
         msg_warning(f"deleting remote {remote_dir} dir...")
         sftp.rmdir(remote_dir)
         msg_success(f"successfully deleted remote {remote_dir} dir")
