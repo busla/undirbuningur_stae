@@ -2,10 +2,8 @@
 name: Build sphinx docs and upload with sftp
 
 on:
-  push:
-    branches:
-      - docker-integration
-
+  pull_request:
+    branches: [ $default-branch ]
 jobs:
   SFTP-Deploy-Action:
     name: SFTP-Deploy-Action
@@ -20,6 +18,7 @@ jobs:
     env:
       HI_USERNAME: ${{ secrets.HI_FTP_USER }}
       HI_PASSWORD: ${{ secrets.HI_FTP_PASSWORD }}
+      DEFAULT_BRANCH: master
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -37,10 +36,10 @@ jobs:
       run: poetry run hicli build
 
     - name: List remote files
-      run: poetry run hicli server list --remote-dir .public-html
+      run: poetry run hicli server --host krafla.rhi.hi.is list --remote-dir .public-html
 
     - name: Trash remote files
-      run: poetry run hicli server delete .public_html/edbook
+      run: poetry run hicli server --host krafla.rhi.hi.is delete --remote-dir .public_html/staging/edbook
 
     - name: Copy build dir to remote server
-      run: poetry run hicli server copy --local-dir ../_build --remote-dir .public_html/edbook
+      run: poetry run hicli server --host krafla.rhi.hi.is copy --local-dir ../_build --remote-dir .public_html/staging/edbook
