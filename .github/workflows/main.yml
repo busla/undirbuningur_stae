@@ -24,31 +24,31 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Set up Python ${{ matrix.python-version }}
-    - id: python_version
+      id: python_version
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
 
     - name: Extract branch name
-    - id: extract_branch
+      id: extract_branch
       shell: bash
       run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
 
     - name: Install dependencies
-    - id: install_dependencies
+      id: install_dependencies
       run: |
         python -m pip install --upgrade pip
         pip install poetry
         poetry install
 
     - name: Build
-    - id: build
+      id: build
       run: poetry run hicli build
 
     - name: Trash remote files
-    - id: remote_cleanup
+      id: remote_cleanup
       run: poetry run hicli server --host krafla.rhi.hi.is delete --remote-dir .public_html/staging/edbook/${{ steps.extract_branch.outputs.branch }}
 
     - name: Copy build dir to remote server
-    - id: deploy
+      id: deploy
       run: poetry run hicli server --host krafla.rhi.hi.is copy --local-dir ../_build --remote-dir .public_html/staging/edbook/${{ steps.extract_branch.outputs.branch }}
