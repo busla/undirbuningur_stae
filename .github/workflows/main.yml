@@ -46,7 +46,7 @@ jobs:
       id: build
       run: |
         poetry run hicli build
-        zip --junk-paths build-artifact _build/
+        zip --junk-paths build-artifact ../_build/
 
     - name: Cleanup and deploy feature branch
       env:
