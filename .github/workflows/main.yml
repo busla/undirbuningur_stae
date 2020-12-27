@@ -70,7 +70,7 @@ jobs:
         poetry run hicli server --host krafla.rhi.hi.is copy --local-dir ../_build --remote-dir .public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}
     - run: echo ${{github.ref}}
     - uses: actions/checkout@v2
-      if: github.event.pull_request.merged == true &&
+      if: github.event.pull_request.merged == true
       with:
         fetch-depth: '0'
     - name: Bump version and push tag
