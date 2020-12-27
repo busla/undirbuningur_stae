@@ -50,26 +50,46 @@ jobs:
       run: |
         poetry run hicli build
         zip --junk-paths -r build-artifact.zip ../_build
-    - name: Cleanup and deploy feature branch
-      env:
-        HI_USERNAME: ${{ secrets.STAGING_HI_USERNAME }}
-        HI_PASSWORD: ${{ secrets.STAGING_HI_PASSWORD }}
-        ENVIRONMENT_URL: ${{ secrets.STAGING_ENVIRONMENT_URL }}
-      id: cleanup_deploy_feature
+    - name: Cleanup and deploy feature
+      id: cleanup_deploy_production
       if: ${{steps.extract_branch.outputs.branch != 'master'}}
-      run: |
-        poetry run hicli server --host krafla.rhi.hi.is delete --remote-dir .public_html/staging/edbook/${{ steps.extract_branch.outputs.branch }}
-        poetry run hicli server --host krafla.rhi.hi.is copy --local-dir ../_build --remote-dir .public_html/staging/edbook/${{ steps.extract_branch.outputs.branch }}
+      uses: appleboy/scp-action@master
+      with:
+        host: krafla.rhi.hi.is
+        username: ${{ secrets.PRODUCTION_HI_USERNAME }}
+        password: ${{ secrets.PRODUCTION_HI_PASSWORD }}
+        port: 22
+        rm: true
+        source: ../_build
+        target: ".public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}"
+    # - name: Cleanup and deploy feature branch
+    #   env:
+    #     HI_USERNAME: ${{ secrets.STAGING_HI_USERNAME }}
+    #     HI_PASSWORD: ${{ secrets.STAGING_HI_PASSWORD }}
+    #     ENVIRONMENT_URL: ${{ secrets.STAGING_ENVIRONMENT_URL }}
+    #   id: cleanup_deploy_feature
+    #   if: ${{steps.extract_branch.outputs.branch != 'master'}}
+    #   run: |
+    #     poetry run hicli server --host krafla.rhi.hi.is delete --remote-dir .public_html/staging/edbook/${{ steps.extract_branch.outputs.branch }}
+    #     poetry run hicli server --host krafla.rhi.hi.is copy --local-dir ../_build --remote-dir .public_html/staging/edbook/${{ steps.extract_branch.outputs.branch }}
     - name: Cleanup and deploy production
-      env:
-        HI_USERNAME: ${{ secrets.PRODUCTION_HI_USERNAME }}
-        HI_PASSWORD: ${{ secrets.PRODUCTION_HI_PASSWORD }}
-        ENVIRONMENT_URL: ${{ secrets.PRODUCTION_ENVIRONMENT_URL }}
       id: cleanup_deploy_production
       if: ${{steps.extract_branch.outputs.branch == 'master'}}
-      run: |
-        poetry run hicli server --host krafla.rhi.hi.is delete --remote-dir .public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}
-        poetry run hicli server --host krafla.rhi.hi.is copy --local-dir ../_build --remote-dir .public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}
+      uses: appleboy/scp-action@master
+      with:
+        host: krafla.rhi.hi.is
+        username: ${{ secrets.PRODUCTION_HI_USERNAME }}
+        password: ${{ secrets.PRODUCTION_HI_PASSWORD }}
+        port: 22
+        rm: true
+        source: ../_build
+        target: ".public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}"
+        # script: |
+        #   whoami
+        #   ls -al
+      # run: |
+      #   poetry run hicli server --host krafla.rhi.hi.is delete --remote-dir .public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}
+      #   poetry run hicli server --host krafla.rhi.hi.is copy --local-dir ../_build --remote-dir .public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}
     - run: echo ${{github.ref}}
     - uses: actions/checkout@v2
       if: github.event.pull_request.merged == true
