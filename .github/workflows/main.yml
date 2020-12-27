@@ -71,7 +71,7 @@ jobs:
         poetry run hicli server --host krafla.rhi.hi.is copy --local-dir ../_build --remote-dir .public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}
   Release:
     needs: Deployment
-    if: ${{ steps.extract_branch.outputs.branch == 'master' }}
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
