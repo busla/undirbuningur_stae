@@ -77,9 +77,11 @@ jobs:
         fetch-depth: '0'
     - name: Bump version and push tag
       uses: anothrNick/github-tag-action@1.26.0
+      if: github.event.pull_request.merged == true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
+        DEFAULT_BUMP: patch
     # - name: Upload release asset
     #   id: upload_release_asset
     #   uses: actions/upload-release-asset@v1
