@@ -54,10 +54,6 @@ jobs:
       run: poetry install
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
 
-    - name: Install dependencies
-      id: install_dependencies
-      run: poetry install
-
     - name: Build
       id: build
       run: poetry run hicli build
