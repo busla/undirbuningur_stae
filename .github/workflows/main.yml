@@ -68,7 +68,7 @@ jobs:
         password: ${{ secrets.PRODUCTION_HI_PASSWORD }}
         port: 22
         rm: true
-        source: ../_build
+        source: _build
         target: ".public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}"
     - run: echo ${{github.ref}}
     - uses: actions/checkout@v2
@@ -82,27 +82,3 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
         DEFAULT_BUMP: patch
-    # - name: Upload release asset
-    #   id: upload_release_asset
-    #   uses: actions/upload-release-asset@v1
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   with:
-    #     upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-    #     asset_path: ./build-artifact.zip
-    #     asset_name: build-artifact.zip
-    #     asset_content_type: application/zip
-  # Release:
-  #   needs: Deployment
-  #   # if: github.event.pull_request.merged == true
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - run: echo ${{github.ref}}
-  #   - uses: actions/checkout@v2
-  #     with:
-  #       fetch-depth: '0'
-  #   - name: Bump version and push tag
-  #     uses: anothrNick/github-tag-action@1.26.0
-  #     env:
-  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       WITH_V: true
