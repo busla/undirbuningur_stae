@@ -4,13 +4,13 @@ on:
   push:
     paths-ignore:
       - "**/README.md"
-    branches-ignore:
-      - master
   pull_request:
     branches:
       - master
+    types: [closed]
 jobs:
   Deployment:
+    if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
     env:
       DEFAULT_BRANCH: master
     name: Deployment
@@ -47,7 +47,7 @@ jobs:
       id: build
       run: |
         poetry run hicli build
-        zip --junk-paths -r ./build-artifact.zip ../_build
+        zip --junk-paths -r build-artifact.zip ../_build
     - name: Cleanup and deploy feature branch
       env:
         HI_USERNAME: ${{ secrets.STAGING_HI_USERNAME }}
@@ -69,9 +69,8 @@ jobs:
         poetry run hicli server --host krafla.rhi.hi.is delete --remote-dir .public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}
         poetry run hicli server --host krafla.rhi.hi.is copy --local-dir ../_build --remote-dir .public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}
     - run: echo ${{github.ref}}
-    - run: ls .
-    - run: ls ../
     - uses: actions/checkout@v2
+      if: github.event.pull_request.merged == true
       with:
         fetch-depth: '0'
     - name: Bump version and push tag
