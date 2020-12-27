@@ -60,7 +60,7 @@ jobs:
         password: ${{ secrets.PRODUCTION_HI_PASSWORD }}
         port: 22
         rm: true
-        source: ../_build
+        source: ./_build
         target: ".public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}"
     # - name: Cleanup and deploy feature branch
     #   env:
