@@ -28,16 +28,6 @@ pylint = "^2.6.0"
 [tool.poetry.scripts]
 hicli = "hi_cli.cli:app"
 
-# [tool.semantic_release]
-# version_variable = [
-#     "hi-cli/pyproject.toml:version"
-# ]
-# branch = "master"
-# upload_to_pypi = false
-# upload_to_release = true
-# build_command = "pip install poetry && poetry build"
-
-
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
