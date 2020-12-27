@@ -34,7 +34,8 @@ jobs:
       id: extract_branch
       shell: bash
       run: echo "::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/})"
-
+    # - name: Install Poetry
+    #   uses: snok/install-poetry@v1.1.1
     - name: Install dependencies
       id: install_dependencies
       run: |
@@ -46,7 +47,7 @@ jobs:
       id: build
       run: |
         poetry run hicli build
-        zip --junk-paths -r build-artifact.zip ../_build
+        zip --junk-paths -r ./build-artifact.zip ../_build
     - name: Cleanup and deploy feature branch
       env:
         HI_USERNAME: ${{ secrets.STAGING_HI_USERNAME }}
