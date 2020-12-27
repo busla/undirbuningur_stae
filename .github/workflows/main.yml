@@ -36,20 +36,32 @@ jobs:
       id: extract_branch
       shell: bash
       run: echo "::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/})"
-    # - name: Install Poetry
-    #   uses: snok/install-poetry@v1.1.1
+
+    - name: Install Poetry
+      uses: snok/install-poetry@v1.1.1
+      with:
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+
+    - name: Load cached venv
+      id: cached-poetry-dependencies
+      uses: actions/cache@v2
+      with:
+        path: .venv
+        key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+
+    - name: Install dependencies
+      run: poetry install
+      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+
     - name: Install dependencies
       id: install_dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install poetry
-        poetry install
+      run: poetry install
 
     - name: Build
       id: build
-      run: |
-        poetry run hicli build
-        zip --junk-paths -r build-artifact.zip ../_build
+      run: poetry run hicli build
+
     - name: Cleanup and deploy feature
       id: cleanup_deploy_feature
       if: ${{steps.extract_branch.outputs.branch != 'master'}}
@@ -61,17 +73,7 @@ jobs:
         port: 22
         rm: true
         source: ./_build
-        target: ".public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}"
-    # - name: Cleanup and deploy feature branch
-    #   env:
-    #     HI_USERNAME: ${{ secrets.STAGING_HI_USERNAME }}
-    #     HI_PASSWORD: ${{ secrets.STAGING_HI_PASSWORD }}
-    #     ENVIRONMENT_URL: ${{ secrets.STAGING_ENVIRONMENT_URL }}
-    #   id: cleanup_deploy_feature
-    #   if: ${{steps.extract_branch.outputs.branch != 'master'}}
-    #   run: |
-    #     poetry run hicli server --host krafla.rhi.hi.is delete --remote-dir .public_html/staging/edbook/${{ steps.extract_branch.outputs.branch }}
-    #     poetry run hicli server --host krafla.rhi.hi.is copy --local-dir ../_build --remote-dir .public_html/staging/edbook/${{ steps.extract_branch.outputs.branch }}
+        target: ".public_html/staging/edbook/${{ steps.extract_branch.outputs.branch }}"
     - name: Cleanup and deploy production
       id: cleanup_deploy_production
       if: ${{steps.extract_branch.outputs.branch == 'master'}}
@@ -84,12 +86,6 @@ jobs:
         rm: true
         source: ../_build
         target: ".public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}"
-        # script: |
-        #   whoami
-        #   ls -al
-      # run: |
-      #   poetry run hicli server --host krafla.rhi.hi.is delete --remote-dir .public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}
-      #   poetry run hicli server --host krafla.rhi.hi.is copy --local-dir ../_build --remote-dir .public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}
     - run: echo ${{github.ref}}
     - uses: actions/checkout@v2
       if: github.event.pull_request.merged == true
