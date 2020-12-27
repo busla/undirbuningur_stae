@@ -9,8 +9,6 @@ on:
   pull_request:
     branches:
       - master
-    types:
-      - closed
 jobs:
   Deployment:
     env:
@@ -46,7 +44,9 @@ jobs:
 
     - name: Build
       id: build
-      run: poetry run hicli build
+      run: |
+        poetry run hicli build
+        zip --junk-paths build-artifact _build/
 
     - name: Cleanup and deploy feature branch
       env:
@@ -58,7 +58,6 @@ jobs:
       run: |
         poetry run hicli server --host krafla.rhi.hi.is delete --remote-dir .public_html/staging/edbook/${{ steps.extract_branch.outputs.branch }}
         poetry run hicli server --host krafla.rhi.hi.is copy --local-dir ../_build --remote-dir .public_html/staging/edbook/${{ steps.extract_branch.outputs.branch }}
-
     - name: Cleanup and deploy production
       env:
         HI_USERNAME: ${{ secrets.PRODUCTION_HI_USERNAME }}
@@ -69,16 +68,37 @@ jobs:
       run: |
         poetry run hicli server --host krafla.rhi.hi.is delete --remote-dir .public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}
         poetry run hicli server --host krafla.rhi.hi.is copy --local-dir ../_build --remote-dir .public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}
-  Release:
-    needs: Deployment
-    if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: '0'
-    - name: Bump version and push tag
-      uses: anothrNick/github-tag-action@1.26.0
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        WITH_V: true
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+    - name: Upload release asset
+      id: upload_release_asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+        asset_path: ./build-artifact.zip
+        asset_name: build-artifact.zip
+        asset_content_type: application/zip
+  # Release:
+  #   needs: Deployment
+  #   # if: github.event.pull_request.merged == true
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - run: echo ${{github.ref}}
+  #   - uses: actions/checkout@v2
+  #     with:
+  #       fetch-depth: '0'
+  #   - name: Bump version and push tag
+  #     uses: anothrNick/github-tag-action@1.26.0
+  #     env:
+  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       WITH_V: true
