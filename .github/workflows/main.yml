@@ -46,6 +46,8 @@ jobs:
     - name: Build
       id: build
       run: poetry run hicli build
+    - run: ls .
+    - run: ls ../
     - name: Cleanup and deploy feature
       id: cleanup_deploy_feature
       if: ${{steps.extract_branch.outputs.branch != 'master'}}
@@ -56,7 +58,7 @@ jobs:
         password: ${{ secrets.PRODUCTION_HI_PASSWORD }}
         port: 22
         rm: true
-        source: ./_build
+        source: _build
         target: ".public_html/staging/edbook/${{ steps.extract_branch.outputs.branch }}"
     - name: Cleanup and deploy production
       id: cleanup_deploy_production
