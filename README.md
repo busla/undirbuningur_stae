@@ -1,3 +1,5 @@
+![Edbook-staging](https://github.com/busla/undirbuningur_stae/workflows/Edbook-staging/badge.svg)
+
 # Instructions
 
 This is a template for a web-based textbook/lecture notes for the University of Iceland's mathematics department, using sphinx (see sphinx-doc.org).
