@@ -1,4 +1,5 @@
-![master](https://github.com/busla/undirbuningur_stae/workflows/Edbook-staging/badge.svg?branch=master)
+![Edbook-staging](https://github.com/busla/undirbuningur_stae/workflows/Edbook-staging/badge.svg)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/busla/undirbuningur_stae?label=version)
 
 # Instructions
 
