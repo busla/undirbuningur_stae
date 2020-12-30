@@ -1,4 +1,4 @@
-![Edbook-staging](https://github.com/busla/undirbuningur_stae/workflows/Edbook-staging/badge.svg)
+![master](https://github.com/busla/undirbuningur_stae/workflows/Edbook-staging/badge.svg?branch=master)
 
 # Instructions
 
