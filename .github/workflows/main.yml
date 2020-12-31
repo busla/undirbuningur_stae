@@ -1,5 +1,5 @@
 
-name: Edbook-staging
+name: edbook
 on:
   push:
     paths-ignore:
@@ -17,12 +17,9 @@ jobs:
       DEFAULT_BRANCH: master
     name: Deployment
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: hi-cli
     strategy:
       matrix:
-        python-version: [3.8]
+        python-version: [3.9]
     steps:
     - uses: actions/checkout@v2
 
@@ -45,13 +42,13 @@ jobs:
 
     - name: Build
       id: build
-      run: poetry run hicli build
+      run: poetry run cli build
     - name: Cleanup and deploy feature
       id: cleanup_deploy_feature
       if: ${{steps.extract_branch.outputs.branch != 'master'}}
       uses: appleboy/scp-action@master
       with:
-        host: krafla.rhi.hi.is
+        host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.PRODUCTION_HI_USERNAME }}
         password: ${{ secrets.PRODUCTION_HI_PASSWORD }}
         port: 22
@@ -63,7 +60,7 @@ jobs:
       if: ${{steps.extract_branch.outputs.branch == 'master'}}
       uses: appleboy/scp-action@master
       with:
-        host: krafla.rhi.hi.is
+        host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.PRODUCTION_HI_USERNAME }}
         password: ${{ secrets.PRODUCTION_HI_PASSWORD }}
         port: 22
