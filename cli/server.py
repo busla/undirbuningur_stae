@@ -86,5 +86,5 @@ def connection(
     ctx.obj["sftp"] = sftp
 
 
-def main():
+if __name__ == "__main__":
     app()
