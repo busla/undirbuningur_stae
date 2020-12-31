@@ -4,13 +4,12 @@ version = "0.1.0"
 description = ""
 authors = ["Benedikt Magnússon og fleiri"]
 packages = [
-    { include = "docs" },
-    { include = "cli" }
+    { include = "docs" }
 ]
 
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 typer = "^0.3.2"
 seedir = "^0.1.2"
 pypandoc = "^1.5"
