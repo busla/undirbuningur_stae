@@ -4,7 +4,8 @@ version = "0.1.0"
 description = ""
 authors = ["Benedikt Magnússon og fleiri"]
 packages = [
-    { include = "docs" }
+    { include = "docs" },
+    { include = "hicli" }
 ]
 
 
@@ -33,7 +34,7 @@ black = "^20.8b1"
 rstcheck = "^3.3.1"
 
 [tool.poetry.scripts]
-hicli = "cli.main:app"
+hicli = "hicli.main:app"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
