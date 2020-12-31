@@ -63,6 +63,7 @@ hicli server list --remote-dir .public-html/<heiti-á-undirmöppu> # default .pu
 
 ### Eyða öllum möppum og skrám frá rótarmöppu
 > **⚠ Aðvörun: Mjög hæg aðgerð og má endurskrifa með því að senda ssh skipun á server**
+>
 > Eyðir öllum skrám á server
 
 
@@ -73,6 +74,7 @@ hicli server delete --remote-dir .public_html/staging/edbook
 
 ## Afrita build möppu á notandasvæði
 > **⚠ Aðvörun: Mjög hæg aðgerð og má endurskrifa með því að zip-a build fyrst og unzippa á server**
+>
 > Afritar allar skrár á server
 
 
