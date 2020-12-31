@@ -31,15 +31,16 @@ python3 setup.py build
 sudo python3 setup.py install
 ```
 ## Install with Poetry
-See [Poetry docs](https://python-poetry.org/docs/#installation) for different install methods.
+See [Poetry docs](https://python-poetry.org/docs/#installation) for recommended install method.
 
 
-This should install all dependencies and custom Sphinx extensions. It also comes with a custom cli tool `hicli` to do all kinds of boring chores. See `hicli --help` for docs or [the hicli README](cli/README.md)
+pip3 install -U pip poetry
+Run the following after Poetry has been installed, which will create a virtualenv and install all dependencies and custom Sphinx extensions. It also comes with a custom cli tool `hicli` to do all kinds of boring chores. See `hicli --help` for docs or [the hicli README](cli/README.md)
 
 ```sh
-pip3 install -U pip poetry
 poetry install
 ```
+
 ## Build html
 Finally, go to the template folder and run the command:
 ```bash
