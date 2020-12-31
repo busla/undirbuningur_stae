@@ -36,26 +36,26 @@ poetry update
 
 ## Keyra build
 ```sh
-poetry run cli build --help
+hicli build --help
 ```
 
 **Dæmi**
 
 ```sh
-poetry run cli build
-poetry run cli build --clean # eyðir build möppu fyrst
+hicli build
+hicli build --clean # eyðir build möppu fyrst
 ```
 
 ### Lista upp möppur og skrár á notandasvæði
 ```sh
-poetry run cli server list --help
+hicli server list --help
 ```
 
 
 **Dæmi**
 
 ```sh
-poetry run cli server list --remote-dir .public-html/<heiti-á-undirmöppu> # default .public_html
+hicli server list --remote-dir .public-html/<heiti-á-undirmöppu> # default .public_html
 ```
 
 ![tree view](https://www.dropbox.com/s/yplhpvltuetizi9/2020-12-26_15-19.png?raw=1)
@@ -67,7 +67,7 @@ poetry run cli server list --remote-dir .public-html/<heiti-á-undirmöppu> # de
 
 
 ```sh
-poetry run cli server delete --remote-dir .public_html/staging/edbook
+hicli server delete --remote-dir .public_html/staging/edbook
 ```
 
 
@@ -78,5 +78,5 @@ poetry run cli server delete --remote-dir .public_html/staging/edbook
 
 ```sh
 # Ef <einhver-mappa> er ekki til á server þá er hún búin til
-poetry run cli server copy --local-dir _build --remote-dir .public_html/<einhver-mappa>
+hicli server copy --local-dir _build --remote-dir .public_html/<einhver-mappa>
 ```
