@@ -2,7 +2,15 @@
 version: 2
 updates:
 - package-ecosystem: pip
-  directory: "/hi-cli"
+  directory: "."
   schedule:
     interval: daily
   open-pull-requests-limit: 10
+  ignored_updates:
+    - dependency_name: "panoptoextension"
+    - dependency_name: "sagecell"
+    - dependency_name: "ggbextension"
+    - dependency_name: "scrolldepthextension"
+    - dependency_name: "hoverroleextension"
+    - dependency_name: "toggleblock"
+    - dependency_name: "custom-button"
