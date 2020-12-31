@@ -42,7 +42,7 @@ jobs:
 
     - name: Build
       id: build
-      run: poetry run cli build
+      run: hicli build
     - name: Cleanup and deploy feature
       id: cleanup_deploy_feature
       if: ${{steps.extract_branch.outputs.branch != 'master'}}
