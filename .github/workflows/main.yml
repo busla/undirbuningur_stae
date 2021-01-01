@@ -39,10 +39,11 @@ jobs:
         pip install -U pip poetry
         poetry install
     - name: Build
-      id: build
+      id: buildecho
       run: |
         poetry run hicli build
         zip -r --junk-paths build.zip _build
+        ls .
     - uses: actions/checkout@v2
       if: github.event.pull_request.merged == true
       with:
@@ -74,7 +75,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./build.zip
+        asset_path: .
         asset_name: build.zip
         asset_content_type: application/zip
     - name: Cleanup and deploy feature
