@@ -35,17 +35,19 @@ jobs:
         env:
           cache-name: cache-venv
         with:
-          path: .venv
-          key: ${{ runner.os }}-venv-${{ hashFiles('**/poetry.lock') }}
+          path: $HOME/.cache/pypoetry/env
+          key: ${{ runner.os }}-venv-${{ hashFiles('poetry.lock') }}
       - name: Install and setup Poetry
         id: install_poetry
         run: |
-          pip install poetry
-          source $HOME/.poetry/env
+          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
           poetry config virtualenvs.in-project true
+          poetry config cache-dir $HOME/.cache/pypoetry
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.path $HOME/.cache/pypoetry/env
       - name: Install dependencies
         run: |
-          source $HOME/.poetry/env
+          source $HOME/.cache/pypoetry/env
           poetry install
   #   if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
   #   env:
