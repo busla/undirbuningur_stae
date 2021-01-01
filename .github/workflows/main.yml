@@ -55,10 +55,15 @@ jobs:
       - name: Install dependencies
         run: poetry install
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+  build:
+    if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
+    name: build
+    runs-on: ubuntu-20.04
+    steps:
       #----------------------------------------------
-      #              run test suite
+      #              Build undirbuningur_stae
       #----------------------------------------------
-      - name: Build
+      - name: build
         run: |
           source .venv/bin/activate
           poetry run hicli build
