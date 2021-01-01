@@ -57,6 +57,7 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
   build:
     if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
+    needs: setup
     name: build
     runs-on: ubuntu-20.04
     steps:
