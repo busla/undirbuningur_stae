@@ -36,14 +36,14 @@ jobs:
     - name: Install dependencies
       id: install_dependencies
       run: |
-        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
-        source $HOME/.poetry/env
+        pip install -U pip poetry
         poetry install
     - name: Build
       id: build
       run: |
         source $HOME/.poetry/env
         poetry run build
+        zip -r --junk-paths build.zip _build
     - name: Cleanup and deploy feature
       id: cleanup_deploy_feature
       if: ${{steps.extract_branch.outputs.branch != 'master'}}
