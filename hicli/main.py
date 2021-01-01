@@ -1,8 +1,5 @@
 import logging
-import os
-from pathlib import Path
 from subprocess import call
-from unicodedata import name
 import typer
 from .server import app as server_app
 from .utils import msg_info, msg_success, ROOT_DIR, msg_warning
@@ -12,6 +9,23 @@ logger = logging.getLogger(__name__)
 
 app = typer.Typer()
 app.add_typer(server_app, name="server")
+
+
+@app.command("run")
+def cmd_build():
+    """
+    Run a simple webserver that loads the build dir
+    """
+    call(
+        [
+            "python",
+            "-m",
+            "http.server",
+            "8000",
+            "--directory",
+            ROOT_DIR.joinpath("_build", "html"),
+        ]
+    )
 
 
 @app.command("build")

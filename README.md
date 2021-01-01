@@ -41,7 +41,22 @@ Run the following after Poetry has been installed, which will create a virtualen
 poetry install
 ```
 
-## Build html
+**Activate the virtualenv in a new shell**
+```sh
+poetry shell
+```
+
+## Build the project
+```sh
+hicli build
+```
+
+## Run a webserver
+```
+python -m http.server _build 8000
+```
+
+# Build html
 Finally, go to the template folder and run the command:
 ```bash
 make html
