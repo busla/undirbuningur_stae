@@ -99,8 +99,8 @@ jobs:
 
   tag:
     # if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
-    needs: setup
-    name: build
+    needs: build
+    name: tag
     runs-on: ubuntu-20.04
     steps:
       - name: Bump version and push tag
