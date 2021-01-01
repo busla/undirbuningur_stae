@@ -3,8 +3,8 @@ on:
   push:
     paths-ignore:
       - "**/README.md"
-    branches-ignore:
-      - master
+    # branches-ignore:
+    #   - master
   pull_request:
     branches:
       - master
@@ -13,7 +13,7 @@ env:
   DEFAULT_BRANCH: master
 jobs:
   setup:
-    if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
+    # if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
     name: setup
     runs-on: ubuntu-20.04
     steps:
@@ -50,7 +50,7 @@ jobs:
         run: poetry install
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
   build:
-    if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
+    # if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
     needs: setup
     name: build
     runs-on: ubuntu-20.04
@@ -95,6 +95,34 @@ jobs:
         run: |
           source .venv/bin/activate
           poetry run hicli build
+          zip -r --junk-paths build _build
+
+  tag:
+    # if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
+    needs: setup
+    name: build
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Bump version and push tag
+        id: bump_version
+        uses: anothrNick/github-tag-action@1.26.0
+        # if: github.event.pull_request.merged == true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          DEFAULT_BUMP: patch
+      - run: ls .
+      # - name: Create Release
+      #   id: create_release
+      #   # if: github.event.pull_request.merged == true
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: ${{ steps.bump_version.outputs.new_tag }}
+      #     release_name: ${{ steps.bump_version.outputs.new_tag }}
+      #     draft: false
+      #     prerelease: false
       # - name: Extract branch name
       #   id: extract_branch
       #   shell: bash
