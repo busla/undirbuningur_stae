@@ -36,15 +36,13 @@ jobs:
     - name: Install dependencies
       id: install_dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install poetry
+        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
         poetry install
+        poetry shell
 
     - name: Build
       id: build
-      run: |
-        poetry shell
-        hicli build
+      run: hicli build
     - name: Cleanup and deploy feature
       id: cleanup_deploy_feature
       if: ${{steps.extract_branch.outputs.branch != 'master'}}
