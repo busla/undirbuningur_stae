@@ -44,7 +44,7 @@ jobs:
       # load cached venv if cache exists
       #----------------------------------------------
       - name: Load cached venv
-        id: cached-poetry-dependencies
+        id: cached_poetry_dependencies
         uses: actions/cache@v2
         with:
           path: .venv
@@ -54,7 +54,7 @@ jobs:
       #----------------------------------------------
       - name: Install dependencies
         run: poetry install
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        if: steps.cached_poetry_dependencies.outputs.cache-hit != 'true'
   build:
     needs: setup
     name: Build
@@ -96,7 +96,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: _build
-          key: build-${{ runner.os }}-${{ hashFiles('_build/*') }}
+          key: build-${{ runner.os }}-${{ hashFiles('_build') }}
       #----------------------------------------------
       # install dependencies if cache does not exist
       #----------------------------------------------
@@ -107,18 +107,10 @@ jobs:
       # Build undirbuningur_stae
       #----------------------------------------------
       - name: build
-        if: steps.cached_poetry_dependencies.outputs.cache-hit != 'true'
+        if: steps.cached_build.outputs.cached_build.cache-hit != 'true'
         run: |
           source .venv/bin/activate
           poetry run hicli build
-      #----------------------------------------------
-      # Upload artifact
-      #----------------------------------------------
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: build
-          path: _build
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
       #----------------------------------------------
@@ -141,10 +133,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
           DEFAULT_BUMP: patch
-      - name: Download build artifact
-        uses: actions/download-artifact@v2
+      #----------------------------------------------
+      # Cache should always exist.
+      #----------------------------------------------
+      - name: Load cached build
+        id: cached_build
+        uses: actions/cache@v2
         with:
-          name: build
+          path: _build
+          key: build-${{ runner.os }}-${{ hashFiles('_build') }}
       - run: zip -r build _build
         name: Zip build output
       - run: ls .
@@ -175,12 +172,14 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       #----------------------------------------------
-      # Download _build directory and upload to remote server
+      # Cache should always exist.
       #----------------------------------------------
-      - name: Download build artifact
-        uses: actions/download-artifact@v2
+      - name: Load cached build
+        id: cached_build
+        uses: actions/cache@v2
         with:
-          name: build
+          path: _build
+          key: build-${{ runner.os }}-${{ hashFiles('_build') }}
       #----------------------------------------------
       # Delete dir on remote server, upload build tar and extract on remote server.
       #----------------------------------------------
@@ -202,12 +201,14 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       #----------------------------------------------
-      # Download _build directory and upload to remote server
+      # Cache should always exist.
       #----------------------------------------------
-      - name: Download build artifact
-        uses: actions/download-artifact@v2
+      - name: Load cached build
+        id: cached_build
+        uses: actions/cache@v2
         with:
-          name: build
+          path: _build
+          key: build-${{ runner.os }}-${{ hashFiles('_build') }}
       - name: Cleanup and deploy production
         id: cleanup_deploy_production
         uses: appleboy/scp-action@master
