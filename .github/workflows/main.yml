@@ -1,10 +1,17 @@
+#----------------------------------------------
+# TODO:
+#   Fix "if" conditions in each job, feels redundant.
+#   There is alot of replication of steps here since Github actions seems limited.
+#   Consider CircleCI.
+#   Cache Poetry bin so it can be reused between jobs instead of installing.
+#----------------------------------------------
 name: edbook
 on:
   push:
     paths-ignore:
       - "**/README.md"
-    # branches-ignore:
-    #   - master
+    branches-ignore:
+      - master
   pull_request:
     branches:
       - master
@@ -13,12 +20,12 @@ env:
   DEFAULT_BRANCH: master
 jobs:
   setup:
-    # if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
+    if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
     name: setup
     runs-on: ubuntu-20.04
     steps:
       #----------------------------------------------
-      #       check-out repo and set-up python
+      # check-out repo and set-up python
       #----------------------------------------------
       - name: Check out repository
         uses: actions/checkout@v2
@@ -27,7 +34,7 @@ jobs:
         with:
           python-version: 3.9
       #----------------------------------------------
-      #  -----  install & configure poetry  -----
+      # install & configure poetry  -----
       #----------------------------------------------
       - name: Install Poetry
         uses: snok/install-poetry@v1.1.1
@@ -35,7 +42,7 @@ jobs:
           virtualenvs-create: true
           virtualenvs-in-project: true
       #----------------------------------------------
-      #       load cached venv if cache exists
+      # load cached venv if cache exists
       #----------------------------------------------
       - name: Load cached venv
         id: cached-poetry-dependencies
@@ -50,13 +57,14 @@ jobs:
         run: poetry install
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
   build:
-    # if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
     needs: setup
     name: build
     runs-on: ubuntu-20.04
+    outputs:
+      branch_name: ${{steps.extract_branch.outputs.branch_name}}
     steps:
       #----------------------------------------------
-      #       check-out repo and set-up python
+      # check-out repo and set-up python
       #----------------------------------------------
       - name: Check out repository
         uses: actions/checkout@v2
@@ -65,7 +73,7 @@ jobs:
         with:
           python-version: 3.9
       #----------------------------------------------
-      #  -----  install & configure poetry  -----
+      # install & configure poetry
       #----------------------------------------------
       - name: Install Poetry
         uses: snok/install-poetry@v1.1.1
@@ -73,39 +81,54 @@ jobs:
           virtualenvs-create: true
           virtualenvs-in-project: true
       #----------------------------------------------
-      #       load cached venv if cache exists
+      # load cached venv if cache exists
       #----------------------------------------------
       - name: Load cached venv
-        id: cached-poetry-dependencies
+        id: cached_poetry_dependencies
         uses: actions/cache@v2
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
       #----------------------------------------------
+      # load cached build if cache exists
+      #----------------------------------------------
+      - name: Load cached build
+        id: cached_build
+        uses: actions/cache@v2
+        with:
+          path: _build
+          key: build-${{ runner.os }}-${{ hashFiles('_build/*') }}
+      #----------------------------------------------
       # install dependencies if cache does not exist
       #----------------------------------------------
       - name: Install dependencies
+        if: steps.cached_poetry_dependencies.outputs.cache-hit != 'true'
         run: poetry install
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-
       #----------------------------------------------
-      #              Build undirbuningur_stae
+      # Build undirbuningur_stae
       #----------------------------------------------
       - name: build
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: |
           source .venv/bin/activate
           poetry run hicli build
-          zip -r --junk-paths build _build
       #----------------------------------------------
-      #              Upload artifact
+      # Upload artifact
       #----------------------------------------------
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
           name: build
-          path: build.zip
+          path: _build
+      #----------------------------------------------
+      # Store current branch name as output for reuse as dir name on remote host
+      #----------------------------------------------
+      - name: Extract branch name
+        id: extract_branch
+        shell: bash
+        run: echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/})"
   tag-and-release:
-    # if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
+    if: github.event.pull_request.merged == true && needs.build.outputs.branch_name == 'master'
     needs: build
     name: Tag and release
     runs-on: ubuntu-20.04
@@ -115,7 +138,6 @@ jobs:
       - name: Bump version and push tag
         id: bump_version
         uses: anothrNick/github-tag-action@1.26.0
-        # if: github.event.pull_request.merged == true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
@@ -124,10 +146,11 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build
+      - run: zip -r build _build
+        name: Zip build output
       - run: ls .
       - name: Create Release
         id: create_release
-        # if: github.event.pull_request.merged == true
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -138,7 +161,6 @@ jobs:
           prerelease: false
       - name: Upload Release Asset
         id: upload-release-asset
-        # if: github.event.pull_request.merged == true
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -147,10 +169,57 @@ jobs:
           asset_path: ./build.zip
           asset_name: build-${{ steps.bump_version.outputs.new_tag }}.zip
           asset_content_type: application/zip
-      # - name: Extract branch name
-      #   id: extract_branch
-      #   shell: bash
-      #   run: echo "::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/})"
+  deploy-feature-branch:
+    if: ${{needs.build.outputs.branch_name != 'master'}}
+    needs: build
+    name: Deploy feature branch
+    runs-on: ubuntu-20.04
+    steps:
+      #----------------------------------------------
+      # Download _build directory and upload to remote server
+      #----------------------------------------------
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+      #----------------------------------------------
+      # Delete dir on remote server, upload build tar and extract on remote server.
+      #----------------------------------------------
+      - name: Cleanup and deploy feature
+        id: cleanup_deploy_feature
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.PRODUCTION_HI_USERNAME }}
+          password: ${{ secrets.PRODUCTION_HI_PASSWORD }}
+          port: 22
+          rm: true
+          source: _build
+          target: ".public_html/staging/edbook/${{ needs.build.outputs.branch_name }}"
+  deploy-production-branch:
+    if: ${{needs.build.outputs.branch_name == 'master'}}
+    needs: [build, tag-and-release]
+    name: Deploy production branch
+    runs-on: ubuntu-20.04
+    steps:
+      #----------------------------------------------
+      # Download _build directory and upload to remote server
+      #----------------------------------------------
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+      - name: Cleanup and deploy production
+        id: cleanup_deploy_production
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.PRODUCTION_HI_USERNAME }}
+          password: ${{ secrets.PRODUCTION_HI_PASSWORD }}
+          port: 22
+          rm: true
+          source: _build
+          target: ".public_html/production/edbook/${{ needs.build.outputs.branch_name }}"
   #   if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
   #   env:
   #     DEFAULT_BRANCH: master
