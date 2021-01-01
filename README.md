@@ -17,7 +17,7 @@ sudo apt-get install git
 sudo apt-get install pandoc
 git clone https://github.com/edbook/template
 ```
-There should now be a template folder in /home/user. The following folders are in the template folder: 
+There should now be a template folder in /home/user. The following folders are in the template folder:
 
 * sagecell-extension
 * toggleblock-extension
@@ -25,19 +25,38 @@ There should now be a template folder in /home/user. The following folders are i
 * SphinxScrolldepth
 * hoverrole
 
-In each of these folders run the following commands: 
+In each of these folders run the following commands:
 ```bash
 python3 setup.py build
 sudo python3 setup.py install
 ```
-## Install with virtualenv
+## Install with Poetry
+See [Poetry docs](https://python-poetry.org/docs/#installation) for recommended install method.
+
+
+pip3 install -U pip poetry
+Run the following after Poetry has been installed, which will create a virtualenv and install all dependencies and custom Sphinx extensions. It also comes with a custom cli tool `hicli` to do all kinds of boring chores. See `hicli --help` for docs or [the hicli README](cli/README.md)
+
+```sh
+poetry install
 ```
-python3 -m venv venv
-source venv/bin/activate
-pip install -U pip
-pip install -r requirements
+
+**Activate the virtualenv in a new shell**
+```sh
+poetry shell
 ```
-## Build html
+
+## Build the project
+```sh
+hicli build
+```
+
+## Run a webserver
+```
+python -m http.server _build 8000
+```
+
+# Build html
 Finally, go to the template folder and run the command:
 ```bash
 make html
@@ -62,7 +81,7 @@ This template comes with a source directory, conf.py file with the values set as
 Pandoc
 ======
 Sphinx generates html and latex files from rst files.
-Pandoc can be used to convert files from tex to rst (and convert between many other filetypes) 
+Pandoc can be used to convert files from tex to rst (and convert between many other filetypes)
 
 Information on pandoc installation can be found at http://pandoc.org/installing.html.
 
@@ -80,7 +99,7 @@ A few things to have in mind when using pandoc to convert latex to rst:
 
 Sphinx extensions
 =================
-Many extensions have been written to add features and modifications to sphinx projects. 
+Many extensions have been written to add features and modifications to sphinx projects.
 Several extensions come bundled with sphinx: http://sphinx-doc.org/extensions.html
 
 Three custom extensions come with this framework (ggbextension to embed geogebra applets, toggleblock-extension for toggleable text sections and sagecell-extension to embed sage cells. See README files in the extension folders.)

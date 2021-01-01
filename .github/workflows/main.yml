@@ -36,13 +36,47 @@ jobs:
     - name: Install dependencies
       id: install_dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install poetry
+        pip install -U pip poetry
         poetry install
-
     - name: Build
       id: build
-      run: poetry run cli build
+      run: |
+        poetry run hicli build
+        zip -r --junk-paths build.zip _build
+    - uses: actions/checkout@v2
+      if: github.event.pull_request.merged == true
+      with:
+        fetch-depth: '0'
+    - name: Bump version and push tag
+      id: bump_version
+      uses: anothrNick/github-tag-action@1.26.0
+      if: github.event.pull_request.merged == true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: true
+        DEFAULT_BUMP: patch
+    - name: Create Release
+      id: create_release
+      if: github.event.pull_request.merged == true
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.bump_version.outputs.new_tag }}
+        release_name: ${{ steps.bump_version.outputs.new_tag }}
+        draft: false
+        prerelease: false
+    - name: Upload Release Asset
+      id: upload-release-asset
+      if: github.event.pull_request.merged == true
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./build.zip
+        asset_name: build.zip
+        asset_content_type: application/zip
     - name: Cleanup and deploy feature
       id: cleanup_deploy_feature
       if: ${{steps.extract_branch.outputs.branch != 'master'}}
@@ -67,15 +101,3 @@ jobs:
         rm: true
         source: _build
         target: ".public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}"
-    - run: echo ${{github.ref}}
-    - uses: actions/checkout@v2
-      if: github.event.pull_request.merged == true
-      with:
-        fetch-depth: '0'
-    - name: Bump version and push tag
-      uses: anothrNick/github-tag-action@1.26.0
-      if: github.event.pull_request.merged == true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        WITH_V: true
-        DEFAULT_BUMP: patch

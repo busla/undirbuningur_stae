@@ -6,7 +6,7 @@ updates:
   schedule:
     interval: daily
   open-pull-requests-limit: 10
-  ignored_updates:
+  ignore:
     - dependency_name: "panoptoextension"
     - dependency_name: "sagecell"
     - dependency_name: "ggbextension"
