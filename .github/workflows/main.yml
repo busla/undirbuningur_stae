@@ -103,6 +103,7 @@ jobs:
     name: tag
     runs-on: ubuntu-20.04
     steps:
+      - run: ls .
       - name: Bump version and push tag
         id: bump_version
         uses: anothrNick/github-tag-action@1.26.0
@@ -111,7 +112,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
           DEFAULT_BUMP: patch
-      - run: ls .
       # - name: Create Release
       #   id: create_release
       #   # if: github.event.pull_request.merged == true
