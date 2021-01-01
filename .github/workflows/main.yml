@@ -103,6 +103,8 @@ jobs:
     name: tag
     runs-on: ubuntu-20.04
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
       - run: ls .
       - name: Bump version and push tag
         id: bump_version
