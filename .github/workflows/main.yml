@@ -43,36 +43,12 @@ jobs:
       run: |
         poetry run hicli build
         zip -r --junk-paths build.zip _build
-    - name: Cleanup and deploy feature
-      id: cleanup_deploy_feature
-      if: ${{steps.extract_branch.outputs.branch != 'master'}}
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.PRODUCTION_HI_USERNAME }}
-        password: ${{ secrets.PRODUCTION_HI_PASSWORD }}
-        port: 22
-        rm: true
-        source: _build
-        target: ".public_html/staging/edbook/${{ steps.extract_branch.outputs.branch }}"
-    - name: Cleanup and deploy production
-      id: cleanup_deploy_production
-      if: ${{steps.extract_branch.outputs.branch == 'master'}}
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.PRODUCTION_HI_USERNAME }}
-        password: ${{ secrets.PRODUCTION_HI_PASSWORD }}
-        port: 22
-        rm: true
-        source: _build
-        target: ".public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}"
-    - run: echo ${{github.ref}}
     - uses: actions/checkout@v2
       if: github.event.pull_request.merged == true
       with:
         fetch-depth: '0'
     - name: Bump version and push tag
+      id: bump_version
       uses: anothrNick/github-tag-action@1.26.0
       if: github.event.pull_request.merged == true
       env:
@@ -99,3 +75,27 @@ jobs:
         asset_path: ./build.zip
         asset_name: build.zip
         asset_content_type: application/zip
+    - name: Cleanup and deploy feature
+      id: cleanup_deploy_feature
+      if: ${{steps.extract_branch.outputs.branch != 'master'}}
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.PRODUCTION_HI_USERNAME }}
+        password: ${{ secrets.PRODUCTION_HI_PASSWORD }}
+        port: 22
+        rm: true
+        source: _build
+        target: ".public_html/staging/edbook/${{ steps.extract_branch.outputs.branch }}"
+    - name: Cleanup and deploy production
+      id: cleanup_deploy_production
+      if: ${{steps.extract_branch.outputs.branch == 'master'}}
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.PRODUCTION_HI_USERNAME }}
+        password: ${{ secrets.PRODUCTION_HI_PASSWORD }}
+        port: 22
+        rm: true
+        source: _build
+        target: ".public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}"
