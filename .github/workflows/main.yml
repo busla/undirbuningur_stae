@@ -96,16 +96,22 @@ jobs:
           source .venv/bin/activate
           poetry run hicli build
           zip -r --junk-paths build _build
-
-  tag:
+      #----------------------------------------------
+      #              Upload artifact
+      #----------------------------------------------
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: build.zip
+  tag-and-release:
     # if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
     needs: build
-    name: tag
+    name: Tag and release
     runs-on: ubuntu-20.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
-      - run: ls .
       - name: Bump version and push tag
         id: bump_version
         uses: anothrNick/github-tag-action@1.26.0
@@ -114,17 +120,33 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
           DEFAULT_BUMP: patch
-      # - name: Create Release
-      #   id: create_release
-      #   # if: github.event.pull_request.merged == true
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: ${{ steps.bump_version.outputs.new_tag }}
-      #     release_name: ${{ steps.bump_version.outputs.new_tag }}
-      #     draft: false
-      #     prerelease: false
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+      - run: ls .
+      - name: Create Release
+        id: create_release
+        # if: github.event.pull_request.merged == true
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.bump_version.outputs.new_tag }}
+          release_name: ${{ steps.bump_version.outputs.new_tag }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        id: upload-release-asset
+        # if: github.event.pull_request.merged == true
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build.zip
+          asset_name: build.zip
+          asset_content_type: application/zip
       # - name: Extract branch name
       #   id: extract_branch
       #   shell: bash
