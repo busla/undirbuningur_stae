@@ -20,8 +20,7 @@ env:
   DEFAULT_BRANCH: master
 jobs:
   setup:
-    if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
-    name: setup
+    name: Setup
     runs-on: ubuntu-20.04
     steps:
       #----------------------------------------------
@@ -58,7 +57,7 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
   build:
     needs: setup
-    name: build
+    name: Build
     runs-on: ubuntu-20.04
     outputs:
       branch_name: ${{steps.extract_branch.outputs.branch_name}}
@@ -108,7 +107,7 @@ jobs:
       # Build undirbuningur_stae
       #----------------------------------------------
       - name: build
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        if: steps.cached_poetry_dependencies.outputs.cache-hit != 'true'
         run: |
           source .venv/bin/activate
           poetry run hicli build
