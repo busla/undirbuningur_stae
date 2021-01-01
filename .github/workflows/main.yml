@@ -41,7 +41,6 @@ jobs:
     - name: Build
       id: build
       run: |
-        source $HOME/.poetry/env
         poetry run build
         zip -r --junk-paths build.zip _build
     - name: Cleanup and deploy feature
