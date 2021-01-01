@@ -1,5 +1,6 @@
 import logging
 from subprocess import call
+from typing import List
 import typer
 from typer.params import Argument
 from .server import app as server_app
@@ -71,16 +72,16 @@ def cmd_autobuild(
     ),
 ):
     """
-    TODO: Needs work. Write a simple wrapper for sphinx-autobuild.
+    TODO: Needs work. A naive wrapper for sphinx-autobuild.
     """
-    # help_args = ["--help", "-h"]
-    # for item in ctx.args:
-    #     print(item)
-    # if any(item in help_args for item in ctx.args):
-    #     print("W00b")
-    #     call(["sphinx-autobuild", *ctx.args])
-    #     raise typer.Exit()
-    call(["sphinx-autobuild", source_dir, build_dir, *ctx.args])
+    params = [param for param in ctx.params.values() if str(param).startswith("-")]
+    default_args = [param.default for param in ctx.command.params]
+    args: list
+    if params:
+        args = ctx.args or [param.default for param in ctx.command.params] + params
+    else:
+        args = [*default_args, *params]
+    call(["sphinx-autobuild", *args])
 
 
 if __name__ == "__main__":

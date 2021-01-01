@@ -18,7 +18,8 @@ Sjá [Poetry docs](https://python-poetry.org/docs/#installation)
 ## Skipanir
 ### Setja upp pakka á localhost
 ```sh
-poetry install
+poetry shell # ræsa virtualenv eða búa til nýtt ef það er ekki til
+poetry install # installa öllum pökkum í virtualenv
 ```
 
 
@@ -33,6 +34,20 @@ poetry show --tree
 poetry update
 ```
 
+## Keyra autobuild
+Með [sphinx-autobuild](https://github.com/executablebooks/sphinx-autobuild) má keyra upp local http server og watcher sem fylgist með breytingum í skrám og endurhleður vafrann þegar skrár eru vistaðar. Þetta getur komið sér vel þegar unnið er í `.rst` skrám og þá hægt að fylgjast með renderuðum breytingum í vafra um leið.
+
+`hicli` er með skipun sem er einfaldur wrapper utan um pakkann.
+
+```sh
+hicli autobuild -h
+```
+
+
+**Dæmi**
+```sh
+hicli autobuild --open-browser
+```
 
 ## Keyra build
 ```sh
