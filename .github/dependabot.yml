@@ -7,10 +7,10 @@ updates:
     interval: daily
   open-pull-requests-limit: 10
   ignore:
-    - dependency_name: "panoptoextension"
-    - dependency_name: "sagecell"
-    - dependency_name: "ggbextension"
-    - dependency_name: "scrolldepthextension"
-    - dependency_name: "hoverroleextension"
-    - dependency_name: "toggleblock"
-    - dependency_name: "custom-button"
+    - dependency-name: "panoptoextension"
+    - dependency-name: "sagecell"
+    - dependency-name: "ggbextension"
+    - dependency-name: "scrolldepthextension"
+    - dependency-name: "hoverroleextension"
+    - dependency-name: "toggleblock"
+    - dependency-name: "custom-button"
