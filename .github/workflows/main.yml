@@ -1,104 +1,212 @@
-
 name: edbook
 on:
   push:
     paths-ignore:
       - "**/README.md"
-    branches-ignore:
-      - master
+    # branches-ignore:
+    #   - master
   pull_request:
     branches:
       - master
     types: [closed]
+env:
+  DEFAULT_BRANCH: master
 jobs:
-  Deployment:
-    if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
-    env:
-      DEFAULT_BRANCH: master
-    name: Deployment
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.9]
+  setup:
+    # if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
+    name: setup
+    runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v2
+      #----------------------------------------------
+      #       check-out repo and set-up python
+      #----------------------------------------------
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      #----------------------------------------------
+      #  -----  install & configure poetry  -----
+      #----------------------------------------------
+      - name: Install Poetry
+        uses: snok/install-poetry@v1.1.1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+      #----------------------------------------------
+      #       load cached venv if cache exists
+      #----------------------------------------------
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+      #----------------------------------------------
+      # install dependencies if cache does not exist
+      #----------------------------------------------
+      - name: Install dependencies
+        run: poetry install
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+  build:
+    # if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
+    needs: setup
+    name: build
+    runs-on: ubuntu-20.04
+    steps:
+      #----------------------------------------------
+      #       check-out repo and set-up python
+      #----------------------------------------------
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      #----------------------------------------------
+      #  -----  install & configure poetry  -----
+      #----------------------------------------------
+      - name: Install Poetry
+        uses: snok/install-poetry@v1.1.1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+      #----------------------------------------------
+      #       load cached venv if cache exists
+      #----------------------------------------------
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+      #----------------------------------------------
+      # install dependencies if cache does not exist
+      #----------------------------------------------
+      - name: Install dependencies
+        run: poetry install
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
 
-    - name: Set up Python ${{ matrix.python-version }}
-      id: python_version
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
+      #----------------------------------------------
+      #              Build undirbuningur_stae
+      #----------------------------------------------
+      - name: build
+        run: |
+          source .venv/bin/activate
+          poetry run hicli build
+          zip -r --junk-paths build _build
 
-    - name: Extract branch name
-      id: extract_branch
-      shell: bash
-      run: echo "::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/})"
-    - name: Install dependencies
-      id: install_dependencies
-      run: |
-        pip install -U pip poetry
-        poetry install
-    - name: Build
-      id: buildecho
-      run: |
-        poetry run hicli build
-        zip -r --junk-paths build.zip _build
-        ls .
-    - uses: actions/checkout@v2
-      if: github.event.pull_request.merged == true
-      with:
-        fetch-depth: '0'
-    - name: Bump version and push tag
-      id: bump_version
-      uses: anothrNick/github-tag-action@1.26.0
-      if: github.event.pull_request.merged == true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        WITH_V: true
-        DEFAULT_BUMP: patch
-    - name: Create Release
-      id: create_release
-      if: github.event.pull_request.merged == true
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ steps.bump_version.outputs.new_tag }}
-        release_name: ${{ steps.bump_version.outputs.new_tag }}
-        draft: false
-        prerelease: false
-    - name: Upload Release Asset
-      id: upload-release-asset
-      if: github.event.pull_request.merged == true
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: build.zip
-        asset_name: build.zip
-        asset_content_type: application/zip
-    - name: Cleanup and deploy feature
-      id: cleanup_deploy_feature
-      if: ${{steps.extract_branch.outputs.branch != 'master'}}
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.PRODUCTION_HI_USERNAME }}
-        password: ${{ secrets.PRODUCTION_HI_PASSWORD }}
-        port: 22
-        rm: true
-        source: _build
-        target: ".public_html/staging/edbook/${{ steps.extract_branch.outputs.branch }}"
-    - name: Cleanup and deploy production
-      id: cleanup_deploy_production
-      if: ${{steps.extract_branch.outputs.branch == 'master'}}
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.PRODUCTION_HI_USERNAME }}
-        password: ${{ secrets.PRODUCTION_HI_PASSWORD }}
-        port: 22
-        rm: true
-        source: _build
-        target: ".public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}"
+  tag:
+    # if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
+    needs: build
+    name: tag
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Bump version and push tag
+        id: bump_version
+        uses: anothrNick/github-tag-action@1.26.0
+        # if: github.event.pull_request.merged == true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          DEFAULT_BUMP: patch
+      - run: ls .
+      # - name: Create Release
+      #   id: create_release
+      #   # if: github.event.pull_request.merged == true
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: ${{ steps.bump_version.outputs.new_tag }}
+      #     release_name: ${{ steps.bump_version.outputs.new_tag }}
+      #     draft: false
+      #     prerelease: false
+      # - name: Extract branch name
+      #   id: extract_branch
+      #   shell: bash
+      #   run: echo "::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/})"
+  #   if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
+  #   env:
+  #     DEFAULT_BRANCH: master
+  #   name: setup
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       python-version: [3.9]
+  #   steps:
+  # build:
+  #   if: github.event.pull_request.merged == true || github.ref != 'refs/heads/master'
+  #   env:
+  #     DEFAULT_BRANCH: master
+  #   name: setup
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       python-version: [3.9]
+  #   steps:
+  #   - name: Build
+  #     id: build
+  #     run: |
+  #       poetry run hicli build
+  #       zip -r --junk-paths build _build
+  #       ls .
+  #     - uses: actions/checkout@v2
+  #       # if: github.event.pull_request.merged == true
+  #       with:
+  #         fetch-depth: "0"
+  #     - name: Bump version and push tag
+  #       id: bump_version
+  #       uses: anothrNick/github-tag-action@1.26.0
+  #       # if: github.event.pull_request.merged == true
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         WITH_V: true
+  #         DEFAULT_BUMP: patch
+  #     - name: Create Release
+  #       id: create_release
+  #       # if: github.event.pull_request.merged == true
+  #       uses: actions/create-release@v1
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       with:
+  #         tag_name: ${{ steps.bump_version.outputs.new_tag }}
+  #         release_name: ${{ steps.bump_version.outputs.new_tag }}
+  #         draft: false
+  #         prerelease: false
+  #     - name: Upload Release Asset
+  #       id: upload-release-asset
+  #       # if: github.event.pull_request.merged == true
+  #       uses: actions/upload-release-asset@v1
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       with:
+  #         upload_url: ${{ steps.create_release.outputs.upload_url }}
+  #         asset_path: ./build.zip
+  #         asset_name: build.zip
+  #         asset_content_type: application/zip
+  #     - name: Cleanup and deploy feature
+  #       id: cleanup_deploy_feature
+  #       if: ${{steps.extract_branch.outputs.branch != 'master'}}
+  #       uses: appleboy/scp-action@master
+  #       with:
+  #         host: ${{ secrets.SSH_HOST }}
+  #         username: ${{ secrets.PRODUCTION_HI_USERNAME }}
+  #         password: ${{ secrets.PRODUCTION_HI_PASSWORD }}
+  #         port: 22
+  #         rm: true
+  #         source: _build
+  #         target: ".public_html/staging/edbook/${{ steps.extract_branch.outputs.branch }}"
+  #     - name: Cleanup and deploy production
+  #       id: cleanup_deploy_production
+  #       if: ${{steps.extract_branch.outputs.branch == 'master'}}
+  #       uses: appleboy/scp-action@master
+  #       with:
+  #         host: ${{ secrets.SSH_HOST }}
+  #         username: ${{ secrets.PRODUCTION_HI_USERNAME }}
+  #         password: ${{ secrets.PRODUCTION_HI_PASSWORD }}
+  #         port: 22
+  #         rm: true
+  #         source: _build
+  #         target: ".public_html/production/edbook/${{ steps.extract_branch.outputs.branch }}"
