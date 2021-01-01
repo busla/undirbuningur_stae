@@ -41,7 +41,7 @@ jobs:
         id: buildecho
         run: |
           poetry run hicli build
-          zip -r --junk-paths build.zip _build
+          zip -r --junk-paths build _build
           ls .
       - uses: actions/checkout@v2
         # if: github.event.pull_request.merged == true
@@ -67,7 +67,6 @@ jobs:
           draft: false
           prerelease: false
       - name: Upload Release Asset
-        run: ls ./
         id: upload-release-asset
         # if: github.event.pull_request.merged == true
         uses: actions/upload-release-asset@v1
