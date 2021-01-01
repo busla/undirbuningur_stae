@@ -145,7 +145,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./build.zip
-          asset_name: build.zip
+          asset_name: build-${{ steps.bump_version.outputs.new_tag }}.zip
           asset_content_type: application/zip
       # - name: Extract branch name
       #   id: extract_branch
