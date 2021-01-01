@@ -41,7 +41,7 @@ jobs:
     - name: Build
       id: build
       run: |
-        poetry run build
+        poetry run hicli build
         zip -r --junk-paths build.zip _build
     - name: Cleanup and deploy feature
       id: cleanup_deploy_feature
