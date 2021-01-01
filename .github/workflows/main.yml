@@ -67,6 +67,7 @@ jobs:
           draft: false
           prerelease: false
       - name: Upload Release Asset
+        run: ls ./
         id: upload-release-asset
         # if: github.event.pull_request.merged == true
         uses: actions/upload-release-asset@v1
