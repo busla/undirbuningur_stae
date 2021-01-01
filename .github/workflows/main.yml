@@ -30,17 +30,19 @@ jobs:
         id: extract_branch
         shell: bash
         run: echo "::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/})"
-      - name: Install and setup Poetry
-        id: install_dependencies
-        run: |
-          python get-poetry.py --preview -y
-          source $HOME/.poetry/env
-          poetry config virtualenvs.in-project true
       - name: Set up cache
-        uses: actions/cache@v1
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-venv
         with:
           path: .venv
           key: ${{ runner.os }}-venv-${{ hashFiles('**/poetry.lock') }}
+      - name: Install and setup Poetry
+        id: install_poetry
+        run: |
+          pip install poetry
+          source $HOME/.poetry/env
+          poetry config virtualenvs.in-project true
       - name: Install dependencies
         run: |
           source $HOME/.poetry/env
