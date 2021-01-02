@@ -144,12 +144,12 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build-${{needs.build.outputs.branch_name}}
+      - run: ls ./${{GITHUB_WORKSPACE}}
       #----------------------------------------------
       # zip build artifact
       #----------------------------------------------
-      - run: zip -r build _build
+      - run: zip -r build ${{$GITHUB_WORKSPACE}}/_build
         name: Zip build output
-      - run: ls .
       - name: Create pre-release
         if: needs.build.outputs.branch_name != 'master'
         id: create_prerelease
