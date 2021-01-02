@@ -18,8 +18,6 @@ on:
     types: [closed]
 env:
   DEFAULT_BRANCH: master
-  BASE_URL_STAGING: https://notendur.hi.is/jlg2/staging/edbook
-  BASE_URL_PRODUCTION: https://notendur.hi.is/jlg2/production/edbook
 jobs:
   setup:
     name: Setup
@@ -196,9 +194,9 @@ jobs:
           rm: true
           source: _build
           target: ".public_html/staging/edbook/${{ needs.build.outputs.branch_name }}"
-      - name: URL output
-        id: url_output
-        run: echo "Visit ${{ env.BASE_URL_STAGING }}/${{ needs.build.outputs.branch_name }}/_build/html"
+      - name: Deployment URL
+        id: deployment_url
+        run: echo "Successfully deployed to https://notendur.hi.is/jlg2/staging/edbook/${{ needs.build.outputs.branch_name }}/_build/html"
   deploy-production-branch:
     if: ${{needs.build.outputs.branch_name == 'master'}}
     needs: [build, tag-and-release]
@@ -225,4 +223,6 @@ jobs:
           rm: true
           source: _build
           target: ".public_html/production/edbook/${{ needs.build.outputs.branch_name }}"
-
+      - name: Deployment URL
+        id: deployment_url
+        run: echo "Successfully deployed to https://notendur.hi.is/jlg2/production/edbook/${{ needs.build.outputs.branch_name }}/_build/html"
