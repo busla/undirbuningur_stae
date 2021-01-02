@@ -33,7 +33,7 @@ jobs:
         with:
           python-version: 3.9
       #----------------------------------------------
-      # install & configure poetry  -----
+      # install & configure poetry
       #----------------------------------------------
       - name: Install Poetry
         uses: snok/install-poetry@v1.1.1
@@ -89,7 +89,7 @@ jobs:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
       #----------------------------------------------
-      # load cached build if cache exists
+      # Instead of rebuilding lets check the hash of the docs dir and use cache if there are no changes
       #----------------------------------------------
       - name: Load cached build
         id: cached_build
@@ -118,6 +118,9 @@ jobs:
         id: extract_branch
         shell: bash
         run: echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/})"
+      #----------------------------------------------
+      # check-out repo and set-up python
+      #----------------------------------------------
       - name: Store build artifact
         uses: actions/upload-artifact@v2
         with:
@@ -150,17 +153,17 @@ jobs:
       #----------------------------------------------
       - run: zip -r build ./${{env.GITHUB_WORKSPACE}}/html ./${{env.GITHUB_WORKSPACE}}/doctrees
         name: Zip build output
-      # - name: Create pre-release
-      #   if: needs.build.outputs.branch_name != 'master'
-      #   id: create_prerelease
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: ${{ steps.bump_version.outputs.new_tag }}
-      #     release_name: ${{ steps.bump_version.outputs.new_tag }}
-      #     draft: false
-      #     prerelease: true
+      - name: Create pre-release
+        if: needs.build.outputs.branch_name != 'master'
+        id: create_prerelease
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.bump_version.outputs.new_tag }}
+          release_name: ${{ steps.bump_version.outputs.new_tag }}
+          draft: false
+          prerelease: true
       - name: Create release
         if: needs.build.outputs.branch_name == 'master'
         id: create_release
@@ -172,17 +175,17 @@ jobs:
           release_name: ${{ steps.bump_version.outputs.new_tag }}
           draft: false
           prerelease: false
-      # - name: Upload pre-release asset
-      #   if: needs.build.outputs.branch_name != 'master'
-      #   id: upload_prerelease_asset
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ steps.create_prerelease.outputs.upload_url }}
-      #     asset_path: ./build.zip
-      #     asset_name: build-${{ steps.bump_version.outputs.tag }}.zip
-      #     asset_content_type: application/zip
+      - name: Upload pre-release asset
+        if: needs.build.outputs.branch_name != 'master'
+        id: upload_prerelease_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_prerelease.outputs.upload_url }}
+          asset_path: ./build.zip
+          asset_name: build-${{ steps.bump_version.outputs.tag }}.zip
+          asset_content_type: application/zip
       - name: Upload release asset
         if: needs.build.outputs.branch_name == 'master'
         id: upload_release_asset
