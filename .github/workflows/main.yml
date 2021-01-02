@@ -169,7 +169,7 @@ jobs:
     if: ${{needs.build.outputs.branch_name != 'master'}}
     environment:
       name: feature
-      url: https://notendur.hi.is/jlg2/staging/edbook/${{ needs.build.outputs.branch_name }}/_build/html
+      url: https://notendur.hi.is/jlg2/staging/edbook/${{ needs.build.outputs.branch_name }}/_build/html/source
     needs: [build, tag-and-release]
     name: Deploy feature branch
     runs-on: ubuntu-20.04
@@ -198,10 +198,10 @@ jobs:
           source: _build
           target: ".public_html/staging/edbook/${{ needs.build.outputs.branch_name }}"
   deploy-production-branch:
+    if: ${{needs.build.outputs.branch_name == 'master'}}
     environment:
       name: production
-      url: https://notendur.hi.is/jlg2/production/edbook/${{ needs.build.outputs.branch_name }}/_build/html
-    if: ${{needs.build.outputs.branch_name == 'master'}}
+      url: https://notendur.hi.is/jlg2/production/edbook/${{ needs.build.outputs.branch_name }}/_build/html/source
     needs: [build, tag-and-release]
     name: Deploy production branch
     runs-on: ubuntu-20.04
@@ -228,4 +228,4 @@ jobs:
           target: ".public_html/production/edbook/${{ needs.build.outputs.branch_name }}"
       - name: Deployment URL
         id: deployment_url
-        run: echo "https://notendur.hi.is/jlg2/production/edbook/${{ needs.build.outputs.branch_name }}/_build/html"
+        run: echo "https://notendur.hi.is/jlg2/production/edbook/${{ needs.build.outputs.branch_name }}/_build/html/source"
