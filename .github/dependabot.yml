@@ -14,3 +14,4 @@ updates:
     - dependency-name: "hoverroleextension"
     - dependency-name: "toggleblock"
     - dependency-name: "custom-button"
+    - dependency-name: "sphinxcontrib-katex"

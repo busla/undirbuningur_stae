@@ -33,7 +33,7 @@ jobs:
         with:
           python-version: 3.9
       #----------------------------------------------
-      # install & configure poetry  -----
+      # install & configure poetry
       #----------------------------------------------
       - name: Install Poetry
         uses: snok/install-poetry@v1.1.1
@@ -89,7 +89,7 @@ jobs:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
       #----------------------------------------------
-      # load cached build if cache exists
+      # Instead of rebuilding lets check the hash of the docs dir and use cache if there are no changes
       #----------------------------------------------
       - name: Load cached build
         id: cached_build
@@ -118,6 +118,14 @@ jobs:
         id: extract_branch
         shell: bash
         run: echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/})"
+      #----------------------------------------------
+      # check-out repo and set-up python
+      #----------------------------------------------
+      - name: Store build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-${{steps.extract_branch.outputs.branch_name}}
+          path: _build
   tag-and-release:
     needs: build
     name: Tag and release
@@ -133,17 +141,18 @@ jobs:
           WITH_V: true
           DEFAULT_BUMP: patch
       #----------------------------------------------
-      # Cache should always exist.
+      # Get build artifact from build job
       #----------------------------------------------
-      - name: Load cached build
-        id: cached_build
-        uses: actions/cache@v2
+      - name: Get build artifact
+        uses: actions/download-artifact@v2
         with:
-          path: _build
-          key: build-${{ runner.os }}-${{ hashFiles('docs') }}
-      - run: zip -r build _build
+          name: build-${{needs.build.outputs.branch_name}}
+      - run: ls ./${{env.GITHUB_WORKSPACE}}
+      #----------------------------------------------
+      # zip build artifact
+      #----------------------------------------------
+      - run: zip -r build ./${{env.GITHUB_WORKSPACE}}/html ./${{env.GITHUB_WORKSPACE}}/doctrees
         name: Zip build output
-      - run: ls .
       - name: Create pre-release
         if: needs.build.outputs.branch_name != 'master'
         id: create_prerelease
@@ -198,14 +207,12 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       #----------------------------------------------
-      # Cache should always exist.
+      # Get build artifact from build job
       #----------------------------------------------
-      - name: Load cached build
-        id: cached_build
-        uses: actions/cache@v2
+      - name: Get build artifact
+        uses: actions/download-artifact@v2
         with:
-          path: _build
-          key: build-${{ runner.os }}-${{ hashFiles('_build') }}
+          name: build-${{needs.build.outputs.branch_name}}
       #----------------------------------------------
       # Delete dir on remote server, upload build tar and extract on remote server.
       #----------------------------------------------
@@ -218,7 +225,7 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: _build
+          source: html,doctrees
           target: ".public_html/staging/edbook/${{ needs.build.outputs.branch_name }}"
   deploy-production-branch:
     if: ${{needs.build.outputs.branch_name == 'master'}}
@@ -230,14 +237,12 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       #----------------------------------------------
-      # Cache should always exist.
+      # Get build artifact from build job
       #----------------------------------------------
-      - name: Load cached build
-        id: cached_build
-        uses: actions/cache@v2
+      - name: Get build artifact
+        uses: actions/download-artifact@v2
         with:
-          path: _build
-          key: build-${{ runner.os }}-${{ hashFiles('docs') }}
+          name: build-${{needs.build.outputs.branch_name}}
       - name: Cleanup and deploy production
         id: cleanup_deploy_production
         uses: appleboy/scp-action@master
@@ -247,5 +252,5 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: _build
+          source: html,doctrees
           target: ".public_html/production/edbook/${{ needs.build.outputs.branch_name }}"
