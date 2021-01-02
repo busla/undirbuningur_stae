@@ -144,15 +144,15 @@ jobs:
       - run: zip -r build _build
         name: Zip build output
       - run: ls .
-      - name: Create pre-release
-        if: github.event.pull_request.merged == true && needs.build.outputs.branch_name == 'master'
+      - name: Create release
+        # if: needs.build.outputs.branch_name != 'master'
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.bump_version.outputs.tag }}
-          release_name: ${{ steps.bump_version.outputs.tag }}
+          tag_name: ${{ steps.bump_version.outputs.new_tag }}
+          release_name: ${{ steps.bump_version.outputs.new_tag }}
           draft: false
           prerelease: false
       - name: Upload Release Asset
@@ -163,7 +163,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./build.zip
-          asset_name: build-${{ steps.bump_version.outputs.new_tag }}.zip
+          asset_name: build-${{ steps.bump_version.outputs.tag }}.zip
           asset_content_type: application/zip
   deploy-feature-branch:
     if: ${{needs.build.outputs.branch_name != 'master'}}
