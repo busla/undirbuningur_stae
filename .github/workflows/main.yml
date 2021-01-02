@@ -168,7 +168,7 @@ jobs:
   deploy-feature-branch:
     if: ${{needs.build.outputs.branch_name != 'master'}}
     environment:
-      name: staging
+      name: feature
       url: https://notendur.hi.is/jlg2/staging/edbook/${{ needs.build.outputs.branch_name }}/_build/html
     needs: [build, tag-and-release]
     name: Deploy feature branch
