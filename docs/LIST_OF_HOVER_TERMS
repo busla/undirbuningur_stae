@@ -1,0 +1,402 @@
+Oddstætt;oddstæður;oddstæður;odd
+Jafnstætt;jafnstæður;jafnstæður;even
+þríhyrnings;þríhyrningur;þríhyrningur;triangle
+samsíðungs;samsíðungur;samsíðungur;parallelogram
+rétthyrnings;rétthyrningur;rétthyrningur;rectangle
+diffra;diffra;diffra;differentiate
+diffrun;diffrun;diffrun;derivation;differentiation
+diffranlegt;diffranleiki;diffranleiki;differentiability
+diffrun;diffrun;diffrun;derivation;differentiation
+markgildi;markgildi;markgildi;limit
+afleiðu;afleiða;afleiða;derivative
+skilgreiningarmengi;skilgreiningarmengi;skilgreiningarmengi;argument domain;domain;domain carrier;index set;latent domain;range of arguments;set of definition;source
+ósamfellt;ósamfellt;ósamfelldur;discontinuous
+samfellt;samfellt;samfelldur;continuous
+aðfellu;aðfella;aðfella;asymptote
+bilinu;bil;bil;interval
+markgildi;markgildi;markgildi;limit
+jafnstætt;jafnstæður;jafnstæður;even
+hnitakerfið;hnitakerfi;hnitakerfi;coordinate system;system of coordinates
+falls;fall;fall;function
+markgildi;markgildi;markgildi;limit
+hliðrun;hliðrun;hliðrun;translation
+ummyndanir;ummyndun;ummyndun;transformation;mapping;record;transform
+aðfellur;aðfella;aðfella;asymptote
+stuðlarnir;stuðull;stuðull;coefficient;component;element;entry;member
+rætt fall;rætt fall;rætt fall;rational function
+logrinn;logri;logri;logarithm
+logrann;logri;logri;logarithm
+Vísisfall;veldisfall;veldisfall;power function
+samskeytt fall;samskeytt fall;samskeytt fall;composite function
+gagntækt;gagntækur;gagntækur;bijective;one-to-one onto
+eintækt;eintækur;eintækur;injective;schlicht;univalent
+átækt;átækur;átækur;surjective;onto
+bakmengi;bakmengi;bakmengi;codomain;latent range;potential range;range;range carrier;target
+formengi;formengi;formengi;argument domain;domain;domain carrier;index set;latent domain;range of arguments;set of definition;source
+andhverfum;andhverfa;andhverfa;inverse;inverse number;reciprocal;reciprocal number
+Krossfeldi;krossfeldi;krossfeldi;cross product;alternating product;exterior product;Grassmann product;outer product;skew product;vector product;wedge product
+krossfeldi;krossfeldi;krossfeldi;cross product;alternating product;exterior product;Grassmann product;outer product;skew product;vector product;wedge product
+innfeldi (punktfeldi);innfeldi;innfeldi;dot product;euclidean inner product;hermitian inner product;inner product;scalar product
+línulega óháðir;línulega óháður;línulega óháður;linearly independent
+samsíða;samsíða;samsíða;parallel
+hallatölu;hallatala;hallatala;slope
+kartesískt;kartesk slétta;kartesk slétta;cartesian plane
+lágvísi;lágvísir;lágvísir;subscript;lower index
+þátt;þáttur;þáttur;component;connected component;factor;maximal connected subgraph
+skalarstærðir;tölustærð;tölustærð;scalar
+Vigrar;vigur;vigur;vector
+rétthyrndan þríhyrning;rétthyrndur þríhyrningur;rétthyrndur þríhyrningur;right triangle;right-angled triangle
+andhverfur;andhverfa;andhverfa;inverse;inverse number;reciprocal;reciprocal number
+lóðfellur;aðfella;aðfella;asymptote
+lóðfellur;aðfella;aðfella;asymptote
+mótlæg skammhlið;mótlæg hlið;mótlæg hlið;opposite side
+aðlæg skammhlið;aðlæg hlið;aðlæg hlið;adjacent side
+langhliðin;langhlið;langhlið;hypotenuse
+lotubundin;lotubundin;lotubundinn;periodic
+hnitakerfið;hnitakerfi;hnitakerfi;coordinate system;system of coordinates
+hornaföll;hornafall;hornafall;trigonometric function;circular function
+einingarhringurinn;einingarhringur;einingarhringur;unit circle
+ummál;ummál;ummál;circumference;perimeter
+bogans;bogi;bogi;arc;circular arc;segment
+geisla;geisli;geisli;radius
+bogaeiningu;bogaeining;bogaeining;radian
+gráður;gráða;gráða;angular degree;degree;degree of angle;local degree;sexagesimal degree;valency;vertex degree
+aðfeldi;aðfeldi;aðfeldi;factorial number
+tvíliðustuðlar;tvíliðustuðull;tvíliðustuðull;binomial coefficient
+liðanir;liða;liða;expand
+stöðluð;stöðluð margliða;stöðluð margliða;monic polynomial;normed polynomial
+óþáttanleg;óþættanleiki;óþættanleiki;indecomposability;irreducibility
+þáttun;þáttun;þáttun;decomposition;partition;resolution;splitting;subdivision
+þátta;þáttun;þáttun;decomposition;partition;resolution;splitting;subdivision
+afgangur;afgangur;afgangur;remainder;least non-negative residue;principal remainder
+kvóti;kvóti;kvóti;quotient;ratio
+fleygbogi;fleygbogi;fleygbogi;parabola
+Annars stigs margliða;Annars stigs margliða;annars stigs margliða;quadratic polynomial
+lína;lína;lína;straight line;row
+tvöfalda núllstöð;tvöföld rót;tvöföld rót;double root
+núllstöð;núllstöð;núllstöð;root;null;Zermelo-Fraenkel set theory with axiom of choice;zero
+rót;rót;rót;root;radix;radical;solution
+rauntölur;rauntala;rauntala;real number
+náttúruleg tala;náttúruleg tala;náttúruleg tala;natural number
+Margliða;Margliða;margliða;polynomial;entire rational function
+bakmengi;bakmengi;bakmengi;codomain;latent range;potential range;range;range carrier;target
+skilgreiningarmengi;skilgreiningarmengi;skilgreiningarmengi;argument domain;domain;domain carrier;index set;latent domain;range of arguments;set of definition;source
+andhverfa vörpunarinnar;andhverf vörpun;andhverf vörpun;inverse mapping
+vörpun;vörpun;vörpun;mapping;record;transform;transformation
+lotubundið;lotubundinn;lotubundinn;periodic
+einhalla;einhalla;einhalla;monotonic
+stranglega minnkandi;stranglega minnkandi;stranglega minnkandi;strictly decreasing
+stranglega vaxandi;stranglega vaxandi;stranglega vaxandi;strictly increasing
+minnkandi;minnkandi;minnkandi;decreasing;antitone;descending;monotonically decreasing;non-increasing
+vaxandi;vaxandi;vaxandi;increasing;ascending;isotone;monotonically increasing;non-decreasing
+oddstætt;oddstæður;oddstæður;odd
+jafnstætt;jafnstæður;jafnstæður;even
+fleygbogi;fleygbogi;fleygbogi;parabola
+lína;lína;lína;straight line;row
+tvennda;tvennd;tvennd;ordered pair;couple;pair
+Graf;línurit;línurit;graph
+fall;fall;fall;function
+myndmengi;myndmengi;myndmengi;actual range;counterdomain;image;range;right domain
+bakmengi;bakmengi;bakmengi;codomain;latent range;potential range;range;range carrier;target
+skilgreiningarmengi;skilgreiningarmengi;skilgreiningarmengi;argument domain;domain;domain carrier;index set;latent domain;range of arguments;set of definition;source
+Vörpun;Vörpun;vörpun;mapping;record;transform;transformation
+hálfopið bil;hálfopið bil;hálfopið bil;half-open interval;semi-open interval
+hálfopið bil;hálfopið bil;hálfopið bil;half-open interval;semi-open interval
+lokað bil;lokað bil;lokað bil;closed interval
+opið bil;opið bil;opið bil;open interval
+bil;bil;bil;interval
+endapunktur;endapunktur;endapunktur;end point;extremity;extremum;limit of integration
+bil;bil;bil;interval
+vísamengi;vísamengi;vísamengi;index set
+vísi;vísitala;vísitala;index
+almengi;almengi;almengi;universal set
+fyllimengi;fyllimengi;fyllimengi;complement;complementary subset
+Faldmengi;Faldmengi;faldmengi;cartesian product;cross product;outer product;product set;set product
+sundurlæg;sundurlægir tveir og tveir;sundurlægir tveir og tveir;mutually exclusive;mutually disjoint;pairwise disjoint
+mengjamismunur;mengjamunur;mengjamunur;difference;relative complement;remainder
+sundurlæg;sundurlægir tveir og tveir;sundurlægir tveir og tveir;mutually exclusive;mutually disjoint;pairwise disjoint
+sniðmengi;sniðmengi;sniðmengi;intersection;meet
+sammengi;sammengi;sammengi;union;join
+Yrðing;yrðing;yrðing;proposition;sentence;statement
+hlutmengi;hlutmengi;hlutmengi;subset
+Tómamengið;tómamengi;tómamengi;empty set;vacuous set;void set
+stak;stak;stak;element;component;coefficient;entry;member
+Mengi;set;setja;set
+kúlu;hvel;hvel;sphere
+þríhyrnings;þríhyrningur;þríhyrningur;triangle
+ummálið;ummál;ummál;circumference;perimeter
+samsíðungs;samsíðungur;samsíðungur;parallelogram
+rétthyrnings;rétthyrningur;rétthyrningur;rectangle
+Breiðbogar;breiðbogi;breiðbogi;hyperbola
+einingarhringur;einingarhringur;einingarhringur;unit circle
+Hringir;hringur;hringur;circle;circuit;cycle;stigm
+brennipunkta;brennipunktur;brennipunktur;focal point;focus
+Sporöskjur;sporaskja;sporaskja;ellipse
+brennipunktur;brennipunktur;brennipunktur;focal point;focus
+hvelfdur;hvelfdur;hvelfdur;concave
+kúptur;kúptur;kúptur;convex
+samhverfuás;samhverfuás;samhverfuás;axis of symmetry
+Fleygbogi;Fleygbogi;fleygbogi;parabola
+breiðboga;breiðbogi;breiðbogi;hyperbola
+hringur;hringur;hringur;circle;circuit;cycle;stigm
+sporöskju;sporaskja;sporaskja;ellipse
+fleygboga;fleygbogi;fleygbogi;parabola
+keila;keila;keila;cone
+ferlarnir;ferill;ferill;curve;curved line;line;trajectory
+Keilusnið;keilusnið;keilusnið;conic section
+samsíða;samsíða;samsíða;parallel
+þverstæðar;þverstæður;þverstæður;perpendicular;orthogonal;normal
+samsíða;samsíða;samsíða;parallel
+skurðpunktur;skurðpunktur;skurðpunktur;point of intersection
+hallatala;hallatala;hallatala;slope
+langhliðina;langhlið;langhlið;hypotenuse
+hnit;hnit;hnit;component
+hnit;hnit;hnit;component
+hornréttar;hornréttur;hornréttur;perpendicular;orthogonal;normal
+talnalínur;talnalína;talnalína;numerical axis
+hnitakerfið;hnitakerfi;hnitakerfi;coordinate system;system of coordinates
+raðir;röð;röð;series;infinite series;order
+runur;runa;runa;sequence;infinite sequence;iteration;progression;run
+algildi;algildi;algildi;absolute value;length;modulus;norm;numerical value
+tölugildi;tölugildi;tölugildi;absolute value;length;modulus;norm;numerical value
+strangar ójöfnur;ströng ójafna;ströng ójafna;strict inequality;strong inequality
+Stærra en eða jafnt;stærri eða jafn og;stærri eða jafn og;greater than or equal to
+Minna en eða jafnt;minni en eða jafn og;minni en eða jafn og;less than or equal to
+Stærra;stærri;stærri;greater
+Minna;minni;minni;less;memory;smaller
+Ójöfnur;ójafna;ójafna;inequality
+innsetningaraðferð;innsetningaraðferð;innsetningaraðferð;substitution method;integration by substitution
+eyðingaraðferð;eyðingaraðferð;eyðingaraðferð;annihilator method;elimination method
+Þáttun;Þáttun;þáttun;decomposition;partition;resolution;splitting;subdivision
+Liðun;liða;liða;expand
+Aðgreinirinn;aðgreinir;aðgreinir;discriminant
+fastar;fasti;fasti;constant;constant function
+Annars stigs jafna;Annars stigs jafna;annars stigs jafna;quadratic equation;quadric
+breytistærðarinnar;breytistærð;breytistærð;variable
+Stig;Stig;stig;degree;linear rank;local degree;order;valency;vertex degree
+Jafna;Jafna;jafna;equation;round
+kvaðratrót;önnur rót;önnur rót;square root;second root
+rótin;rót;rót;root;radix;radical;solution
+veldisvísir;veldisvísir;veldisvísir;exponent;power exponent
+veldisstofn;veldisstofn;veldisstofn;base;radix
+Veldi;Veldi;veldi;power
+módulus;leifastofn;leifastofn;modulus
+afgangi;afgangur;afgangur;remainder;least non-negative residue;principal remainder
+heiltölur;heiltala;heiltala;integer;integral number;rational integer;whole number
+lengja;framlengja;framlengja;extend
+stytta;stytta;stytta;reduce;cancel
+Minnsta samfeldi;Minnsta samfeldi;minnsta samfeldi;least common multiple;lowest common multiple;smallest common multiple
+Stærsti samdeilir;Stærsti samdeilir;stærsti samdeilir;greatest common divisor;greatest element;highest common factor;largest element;maximum element
+frumþátta;frumþáttun;frumþáttun;prime decomposition
+frumtölur;frumtala;frumtala;prime number
+aðgerðir;reikniaðgerð;reikniaðgerð;algebraic operation;law of composition;operation
+hlutmengi;hlutmengi;hlutmengi;subset
+rauntölurnar;rauntala;rauntala;real number
+óræðar tölur;óræð tala;óræð tala;irrational number
+nefnari;nefnari;nefnari;denominator
+teljari;teljari;teljari;numerator
+Ræðar tölur;ræð tala;ræð tala;rational number
+Heilu tölurnar;heiltala;heiltala;integer;integral number;rational integer;whole number
+Mengi;set;setja;set
+náttúrulegu tölurnar;náttúruleg tala;náttúruleg tala;natural number
+Oddstætt;oddstæður;oddstæður;odd
+Jafnstætt;jafnstæður;jafnstæður;even
+þríhyrnings;þríhyrningur;þríhyrningur;triangle
+samsíðungs;samsíðungur;samsíðungur;parallelogram
+rétthyrnings;rétthyrningur;rétthyrningur;rectangle
+diffra;diffra;diffra;differentiate
+diffrun;diffrun;diffrun;derivation;differentiation
+diffranlegt;diffranleiki;diffranleiki;differentiability
+diffrun;diffrun;diffrun;derivation;differentiation
+markgildi;markgildi;markgildi;limit
+afleiðu;afleiða;afleiða;derivative
+skilgreiningarmengi;skilgreiningarmengi;skilgreiningarmengi;argument domain;domain;domain carrier;index set;latent domain;range of arguments;set of definition;source
+ósamfellt;ósamfellt;ósamfelldur;discontinuous
+samfellt;samfellt;samfelldur;continuous
+aðfellu;aðfella;aðfella;asymptote
+bilinu;bil;bil;interval
+markgildi;markgildi;markgildi;limit
+jafnstætt;jafnstæður;jafnstæður;even
+hnitakerfið;hnitakerfi;hnitakerfi;coordinate system;system of coordinates
+falls;fall;fall;function
+markgildi;markgildi;markgildi;limit
+hliðrun;hliðrun;hliðrun;translation
+ummyndanir;ummyndun;ummyndun;transformation;mapping;record;transform
+aðfellur;aðfella;aðfella;asymptote
+stuðlarnir;stuðull;stuðull;coefficient;component;element;entry;member
+rætt fall;rætt fall;rætt fall;rational function
+logrinn;logri;logri;logarithm
+logrann;logri;logri;logarithm
+Vísisfall;veldisfall;veldisfall;power function
+samskeytt fall;samskeytt fall;samskeytt fall;composite function
+gagntækt;gagntækur;gagntækur;bijective;one-to-one onto
+eintækt;eintækur;eintækur;injective;schlicht;univalent
+átækt;átækur;átækur;surjective;onto
+bakmengi;bakmengi;bakmengi;codomain;latent range;potential range;range;range carrier;target
+formengi;formengi;formengi;argument domain;domain;domain carrier;index set;latent domain;range of arguments;set of definition;source
+andhverfum;andhverfa;andhverfa;inverse;inverse number;reciprocal;reciprocal number
+Krossfeldi;krossfeldi;krossfeldi;cross product;alternating product;exterior product;Grassmann product;outer product;skew product;vector product;wedge product
+krossfeldi;krossfeldi;krossfeldi;cross product;alternating product;exterior product;Grassmann product;outer product;skew product;vector product;wedge product
+innfeldi (punktfeldi);innfeldi;innfeldi;dot product;euclidean inner product;hermitian inner product;inner product;scalar product
+línulega óháðir;línulega óháður;línulega óháður;linearly independent
+samsíða;samsíða;samsíða;parallel
+hallatölu;hallatala;hallatala;slope
+kartesískt;kartesk slétta;kartesk slétta;cartesian plane
+lágvísi;lágvísir;lágvísir;subscript;lower index
+þátt;þáttur;þáttur;component;connected component;factor;maximal connected subgraph
+skalarstærðir;tölustærð;tölustærð;scalar
+Vigrar;vigur;vigur;vector
+rétthyrndan þríhyrning;rétthyrndur þríhyrningur;rétthyrndur þríhyrningur;right triangle;right-angled triangle
+andhverfur;andhverfa;andhverfa;inverse;inverse number;reciprocal;reciprocal number
+lóðfellur;aðfella;aðfella;asymptote
+lóðfellur;aðfella;aðfella;asymptote
+mótlæg skammhlið;mótlæg hlið;mótlæg hlið;opposite side
+aðlæg skammhlið;aðlæg hlið;aðlæg hlið;adjacent side
+langhliðin;langhlið;langhlið;hypotenuse
+lotubundin;lotubundin;lotubundinn;periodic
+hnitakerfið;hnitakerfi;hnitakerfi;coordinate system;system of coordinates
+hornaföll;hornafall;hornafall;trigonometric function;circular function
+einingarhringurinn;einingarhringur;einingarhringur;unit circle
+ummál;ummál;ummál;circumference;perimeter
+bogans;bogi;bogi;arc;circular arc;segment
+geisla;geisli;geisli;radius
+bogaeiningu;bogaeining;bogaeining;radian
+gráður;gráða;gráða;angular degree;degree;degree of angle;local degree;sexagesimal degree;valency;vertex degree
+aðfeldi;aðfeldi;aðfeldi;factorial number
+tvíliðustuðlar;tvíliðustuðull;tvíliðustuðull;binomial coefficient
+liðanir;liða;liða;expand
+stöðluð;stöðluð margliða;stöðluð margliða;monic polynomial;normed polynomial
+óþáttanleg;óþættanleiki;óþættanleiki;indecomposability;irreducibility
+þáttun;þáttun;þáttun;decomposition;partition;resolution;splitting;subdivision
+þátta;þáttun;þáttun;decomposition;partition;resolution;splitting;subdivision
+afgangur;afgangur;afgangur;remainder;least non-negative residue;principal remainder
+kvóti;kvóti;kvóti;quotient;ratio
+fleygbogi;fleygbogi;fleygbogi;parabola
+Annars stigs margliða;Annars stigs margliða;annars stigs margliða;quadratic polynomial
+lína;lína;lína;straight line;row
+tvöfalda núllstöð;tvöföld rót;tvöföld rót;double root
+núllstöð;núllstöð;núllstöð;root;null;Zermelo-Fraenkel set theory with axiom of choice;zero
+rót;rót;rót;root;radix;radical;solution
+rauntölur;rauntala;rauntala;real number
+náttúruleg tala;náttúruleg tala;náttúruleg tala;natural number
+Margliða;Margliða;margliða;polynomial;entire rational function
+bakmengi;bakmengi;bakmengi;codomain;latent range;potential range;range;range carrier;target
+skilgreiningarmengi;skilgreiningarmengi;skilgreiningarmengi;argument domain;domain;domain carrier;index set;latent domain;range of arguments;set of definition;source
+andhverfa vörpunarinnar;andhverf vörpun;andhverf vörpun;inverse mapping
+vörpun;vörpun;vörpun;mapping;record;transform;transformation
+lotubundið;lotubundinn;lotubundinn;periodic
+einhalla;einhalla;einhalla;monotonic
+stranglega minnkandi;stranglega minnkandi;stranglega minnkandi;strictly decreasing
+stranglega vaxandi;stranglega vaxandi;stranglega vaxandi;strictly increasing
+minnkandi;minnkandi;minnkandi;decreasing;antitone;descending;monotonically decreasing;non-increasing
+vaxandi;vaxandi;vaxandi;increasing;ascending;isotone;monotonically increasing;non-decreasing
+oddstætt;oddstæður;oddstæður;odd
+jafnstætt;jafnstæður;jafnstæður;even
+fleygbogi;fleygbogi;fleygbogi;parabola
+lína;lína;lína;straight line;row
+tvennda;tvennd;tvennd;ordered pair;couple;pair
+Graf;línurit;línurit;graph
+fall;fall;fall;function
+myndmengi;myndmengi;myndmengi;actual range;counterdomain;image;range;right domain
+bakmengi;bakmengi;bakmengi;codomain;latent range;potential range;range;range carrier;target
+skilgreiningarmengi;skilgreiningarmengi;skilgreiningarmengi;argument domain;domain;domain carrier;index set;latent domain;range of arguments;set of definition;source
+Vörpun;Vörpun;vörpun;mapping;record;transform;transformation
+hálfopið bil;hálfopið bil;hálfopið bil;half-open interval;semi-open interval
+hálfopið bil;hálfopið bil;hálfopið bil;half-open interval;semi-open interval
+lokað bil;lokað bil;lokað bil;closed interval
+opið bil;opið bil;opið bil;open interval
+bil;bil;bil;interval
+endapunktur;endapunktur;endapunktur;end point;extremity;extremum;limit of integration
+bil;bil;bil;interval
+vísamengi;vísamengi;vísamengi;index set
+vísi;vísitala;vísitala;index
+almengi;almengi;almengi;universal set
+fyllimengi;fyllimengi;fyllimengi;complement;complementary subset
+Faldmengi;Faldmengi;faldmengi;cartesian product;cross product;outer product;product set;set product
+sundurlæg;sundurlægir tveir og tveir;sundurlægir tveir og tveir;mutually exclusive;mutually disjoint;pairwise disjoint
+mengjamismunur;mengjamunur;mengjamunur;difference;relative complement;remainder
+sundurlæg;sundurlægir tveir og tveir;sundurlægir tveir og tveir;mutually exclusive;mutually disjoint;pairwise disjoint
+sniðmengi;sniðmengi;sniðmengi;intersection;meet
+sammengi;sammengi;sammengi;union;join
+Yrðing;yrðing;yrðing;proposition;sentence;statement
+hlutmengi;hlutmengi;hlutmengi;subset
+Tómamengið;tómamengi;tómamengi;empty set;vacuous set;void set
+stak;stak;stak;element;component;coefficient;entry;member
+Mengi;set;setja;set
+kúlu;hvel;hvel;sphere
+þríhyrnings;þríhyrningur;þríhyrningur;triangle
+ummálið;ummál;ummál;circumference;perimeter
+samsíðungs;samsíðungur;samsíðungur;parallelogram
+rétthyrnings;rétthyrningur;rétthyrningur;rectangle
+Breiðbogar;breiðbogi;breiðbogi;hyperbola
+einingarhringur;einingarhringur;einingarhringur;unit circle
+Hringir;hringur;hringur;circle;circuit;cycle;stigm
+brennipunkta;brennipunktur;brennipunktur;focal point;focus
+Sporöskjur;sporaskja;sporaskja;ellipse
+brennipunktur;brennipunktur;brennipunktur;focal point;focus
+hvelfdur;hvelfdur;hvelfdur;concave
+kúptur;kúptur;kúptur;convex
+samhverfuás;samhverfuás;samhverfuás;axis of symmetry
+Fleygbogi;Fleygbogi;fleygbogi;parabola
+breiðboga;breiðbogi;breiðbogi;hyperbola
+hringur;hringur;hringur;circle;circuit;cycle;stigm
+sporöskju;sporaskja;sporaskja;ellipse
+fleygboga;fleygbogi;fleygbogi;parabola
+keila;keila;keila;cone
+ferlarnir;ferill;ferill;curve;curved line;line;trajectory
+Keilusnið;keilusnið;keilusnið;conic section
+samsíða;samsíða;samsíða;parallel
+þverstæðar;þverstæður;þverstæður;perpendicular;orthogonal;normal
+samsíða;samsíða;samsíða;parallel
+skurðpunktur;skurðpunktur;skurðpunktur;point of intersection
+hallatala;hallatala;hallatala;slope
+langhliðina;langhlið;langhlið;hypotenuse
+hnit;hnit;hnit;component
+hnit;hnit;hnit;component
+hornréttar;hornréttur;hornréttur;perpendicular;orthogonal;normal
+talnalínur;talnalína;talnalína;numerical axis
+hnitakerfið;hnitakerfi;hnitakerfi;coordinate system;system of coordinates
+raðir;röð;röð;series;infinite series;order
+runur;runa;runa;sequence;infinite sequence;iteration;progression;run
+algildi;algildi;algildi;absolute value;length;modulus;norm;numerical value
+tölugildi;tölugildi;tölugildi;absolute value;length;modulus;norm;numerical value
+strangar ójöfnur;ströng ójafna;ströng ójafna;strict inequality;strong inequality
+Stærra en eða jafnt;stærri eða jafn og;stærri eða jafn og;greater than or equal to
+Minna en eða jafnt;minni en eða jafn og;minni en eða jafn og;less than or equal to
+Stærra;stærri;stærri;greater
+Minna;minni;minni;less;memory;smaller
+Ójöfnur;ójafna;ójafna;inequality
+innsetningaraðferð;innsetningaraðferð;innsetningaraðferð;substitution method;integration by substitution
+eyðingaraðferð;eyðingaraðferð;eyðingaraðferð;annihilator method;elimination method
+Þáttun;Þáttun;þáttun;decomposition;partition;resolution;splitting;subdivision
+Liðun;liða;liða;expand
+Aðgreinirinn;aðgreinir;aðgreinir;discriminant
+fastar;fasti;fasti;constant;constant function
+Annars stigs jafna;Annars stigs jafna;annars stigs jafna;quadratic equation;quadric
+breytistærðarinnar;breytistærð;breytistærð;variable
+Stig;Stig;stig;degree;linear rank;local degree;order;valency;vertex degree
+Jafna;Jafna;jafna;equation;round
+kvaðratrót;önnur rót;önnur rót;square root;second root
+rótin;rót;rót;root;radix;radical;solution
+veldisvísir;veldisvísir;veldisvísir;exponent;power exponent
+veldisstofn;veldisstofn;veldisstofn;base;radix
+Veldi;Veldi;veldi;power
+módulus;leifastofn;leifastofn;modulus
+afgangi;afgangur;afgangur;remainder;least non-negative residue;principal remainder
+heiltölur;heiltala;heiltala;integer;integral number;rational integer;whole number
+lengja;framlengja;framlengja;extend
+stytta;stytta;stytta;reduce;cancel
+Minnsta samfeldi;Minnsta samfeldi;minnsta samfeldi;least common multiple;lowest common multiple;smallest common multiple
+Stærsti samdeilir;Stærsti samdeilir;stærsti samdeilir;greatest common divisor;greatest element;highest common factor;largest element;maximum element
+frumþátta;frumþáttun;frumþáttun;prime decomposition
+frumtölur;frumtala;frumtala;prime number
+aðgerðir;reikniaðgerð;reikniaðgerð;algebraic operation;law of composition;operation
+hlutmengi;hlutmengi;hlutmengi;subset
+rauntölurnar;rauntala;rauntala;real number
+óræðar tölur;óræð tala;óræð tala;irrational number
+nefnari;nefnari;nefnari;denominator
+teljari;teljari;teljari;numerator
+Ræðar tölur;ræð tala;ræð tala;rational number
+Heilu tölurnar;heiltala;heiltala;integer;integral number;rational integer;whole number
+Mengi;set;setja;set
+náttúrulegu tölurnar;náttúruleg tala;náttúruleg tala;natural number
