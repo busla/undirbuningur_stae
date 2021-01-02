@@ -118,6 +118,11 @@ jobs:
         id: extract_branch
         shell: bash
         run: echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/})"
+      - name: Store build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-${{steps.extract_branch.outputs.branch_name}}
+          path: _build
   tag-and-release:
     needs: build
     name: Tag and release
@@ -133,14 +138,15 @@ jobs:
           WITH_V: true
           DEFAULT_BUMP: patch
       #----------------------------------------------
-      # Cache should always exist.
+      # Get build artifact from build job
       #----------------------------------------------
-      - name: Load cached build
-        id: cached_build
-        uses: actions/cache@v2
+      - name: Get build artifact
+        uses: actions/download-artifact@v2
         with:
-          path: _build
-          key: build-${{ runner.os }}-${{ hashFiles('docs') }}
+          name: build-${{needs.build.outputs.branch_name}}
+      #----------------------------------------------
+      # zip build artifact
+      #----------------------------------------------
       - run: zip -r build _build
         name: Zip build output
       - run: ls .
@@ -198,14 +204,12 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       #----------------------------------------------
-      # Cache should always exist.
+      # Get build artifact from build job
       #----------------------------------------------
-      - name: Load cached build
-        id: cached_build
-        uses: actions/cache@v2
+      - name: Get build artifact
+        uses: actions/download-artifact@v2
         with:
-          path: _build
-          key: build-${{ runner.os }}-${{ hashFiles('_build') }}
+          name: build-${{needs.build.outputs.branch_name}}
       #----------------------------------------------
       # Delete dir on remote server, upload build tar and extract on remote server.
       #----------------------------------------------
@@ -230,14 +234,12 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       #----------------------------------------------
-      # Cache should always exist.
+      # Get build artifact from build job
       #----------------------------------------------
-      - name: Load cached build
-        id: cached_build
-        uses: actions/cache@v2
+      - name: Get build artifact
+        uses: actions/download-artifact@v2
         with:
-          path: _build
-          key: build-${{ runner.os }}-${{ hashFiles('docs') }}
+          name: build-${{needs.build.outputs.branch_name}}
       - name: Cleanup and deploy production
         id: cleanup_deploy_production
         uses: appleboy/scp-action@master
