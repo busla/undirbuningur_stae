@@ -144,8 +144,19 @@ jobs:
       - run: zip -r build _build
         name: Zip build output
       - run: ls .
+      - name: Create pre-release
+        if: needs.build.outputs.branch_name != 'master'
+        id: create_prerelease
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.bump_version.outputs.new_tag }}
+          release_name: ${{ steps.bump_version.outputs.new_tag }}
+          draft: false
+          prerelease: false
       - name: Create release
-        # if: needs.build.outputs.branch_name != 'master'
+        if: needs.build.outputs.branch_name == 'master'
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -155,6 +166,28 @@ jobs:
           release_name: ${{ steps.bump_version.outputs.new_tag }}
           draft: false
           prerelease: false
+      - name: Upload pre-release asset
+        if: needs.build.outputs.branch_name != 'master'
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_prerelease.outputs.upload_url }}
+          asset_path: ./build.zip
+          asset_name: build-${{ steps.bump_version.outputs.tag }}.zip
+          asset_content_type: application/zip
+      - name: Upload release asset
+        if: needs.build.outputs.branch_name == 'master'
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build.zip
+          asset_name: build-${{ steps.bump_version.outputs.tag }}.zip
+          asset_content_type: application/zip
       - name: Upload Release Asset
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
