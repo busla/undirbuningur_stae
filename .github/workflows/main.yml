@@ -170,7 +170,7 @@ jobs:
     environment:
       name: staging
       url: https://notendur.hi.is/jlg2/staging/edbook/${{ needs.build.outputs.branch_name }}/_build/html
-    needs: build
+    needs: [build, tag-and-release]
     name: Deploy feature branch
     runs-on: ubuntu-20.04
     steps:
