@@ -107,7 +107,7 @@ jobs:
       # Build undirbuningur_stae
       #----------------------------------------------
       - name: build
-        if: steps.cached_build.outputs.cached_build.cache-hit != 'true'
+        if: steps.cached_build.outputs.cache-hit != 'true'
         run: |
           source .venv/bin/activate
           poetry run hicli build
@@ -119,7 +119,7 @@ jobs:
         shell: bash
         run: echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/})"
   tag-and-release:
-    if: github.event.pull_request.merged == true && needs.build.outputs.branch_name == 'master'
+    # if: github.event.pull_request.merged == true && needs.build.outputs.branch_name == 'master'
     needs: build
     name: Tag and release
     runs-on: ubuntu-20.04
@@ -141,7 +141,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: _build
-          key: build-${{ runner.os }}-${{ hashFiles('_build') }}
+          key: build-${{ runner.os }}-${{ hashFiles('docs') }}
       - run: zip -r build _build
         name: Zip build output
       - run: ls .
@@ -167,6 +167,9 @@ jobs:
           asset_content_type: application/zip
   deploy-feature-branch:
     if: ${{needs.build.outputs.branch_name != 'master'}}
+    environment:
+      name: staging
+      url: https://notendur.hi.is/jlg2/staging/edbook/${{ needs.build.outputs.branch_name }}/_build/html
     needs: build
     name: Deploy feature branch
     runs-on: ubuntu-20.04
@@ -188,16 +191,16 @@ jobs:
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.PRODUCTION_HI_USERNAME }}
-          password: ${{ secrets.PRODUCTION_HI_PASSWORD }}
+          username: ${{ secrets.HI_USERNAME }}
+          password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
           source: _build
           target: ".public_html/staging/edbook/${{ needs.build.outputs.branch_name }}"
-      - name: Deployment URL
-        id: deployment_url
-        run: echo "Successfully deployed to https://notendur.hi.is/jlg2/staging/edbook/${{ needs.build.outputs.branch_name }}/_build/html"
   deploy-production-branch:
+    environment:
+      name: production
+      url: https://notendur.hi.is/jlg2/production/edbook/${{ needs.build.outputs.branch_name }}/_build/html
     if: ${{needs.build.outputs.branch_name == 'master'}}
     needs: [build, tag-and-release]
     name: Deploy production branch
@@ -217,12 +220,12 @@ jobs:
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.PRODUCTION_HI_USERNAME }}
-          password: ${{ secrets.PRODUCTION_HI_PASSWORD }}
+          username: ${{ secrets.HI_USERNAME }}
+          password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
           source: _build
           target: ".public_html/production/edbook/${{ needs.build.outputs.branch_name }}"
       - name: Deployment URL
         id: deployment_url
-        run: echo "Successfully deployed to https://notendur.hi.is/jlg2/production/edbook/${{ needs.build.outputs.branch_name }}/_build/html"
+        run: echo "https://notendur.hi.is/jlg2/production/edbook/${{ needs.build.outputs.branch_name }}/_build/html"
