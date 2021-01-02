@@ -5,6 +5,53 @@
 
 This is a template for a web-based textbook/lecture notes for the University of Iceland's mathematics department, using sphinx (see sphinx-doc.org).
 
+## Install with Poetry
+See [Poetry docs](https://python-poetry.org/docs/#installation) for recommended install method.
+
+
+Run the following after Poetry has been installed, which will create a virtualenv and install all dependencies and custom Sphinx extensions. It also comes with a custom cli tool `hicli` to do all kinds of boring chores. See `hicli --help` for docs or [the hicli README](cli/README.md)
+
+```sh
+poetry shell
+poetry install
+```
+
+## Run development server
+Run a dev server for local development. This will open a tab in your browser at http://localhost:8000 which will update each time you you save a document in the [source](docs/source)  directory.
+```
+hicli autobuild --open-browser
+```
+
+## Build the project
+> 🛈 Building the project is not needed if you are using the `autobuild` command.  
+```sh
+hicli build
+```
+
+## Contribute
+The following rules should be followed when contributing:
+- Create a branch (or fork the project if you are not already a contributor) from master
+- Commit messages should follow the [Conventional Commits specs](https://www.conventionalcommits.org)
+
+By using the _Conventional Commits specs_ the [semver](https://semver.org/) release tags _(major.minor.patch / 0.1.0)_ will be determined automatically based on the commit messages, e.g. `fix: changed some stuff` will bump the current version as a `patch` to `0.1.1`, as supposed to `feat: added a new chapter` will bump the current version as a `minor` to `0.2.0`.
+
+Breaking changes, e.g. `BREAKING CHANGE: replacing RestructuredTEXT with Markdown in Sphinx` will bump the current version as a `major` release to `1.1.0`.
+
+[Commitizen](https://commitizen-tools.github.io/commitizen/) already comes installed as a dev-dependency to help you out with this. Instead of using `git commit -a -m "feat: some feature"` you can use the _Committizen CLI_ which will prompt options in the terminal.
+
+```sh
+cz commit
+```
+
+
+**TODO: needs work**
+
+Each time you push changes to the remote branch a [pre-release](https://github.com/busla/undirbuningur_stae/releases) will be created and deployed to `https:/notendur.hi.is/some-user/path/to/branch`.
+
+
+When the project owners merge the feature branch to master an automatic release will be created and deployed to production.
+
+
 ## Install without virtualenv
 For ubuntu based distros run the following commands in the terminal:
 
@@ -29,44 +76,6 @@ In each of these folders run the following commands:
 ```bash
 python3 setup.py build
 sudo python3 setup.py install
-```
-## Install with Poetry
-See [Poetry docs](https://python-poetry.org/docs/#installation) for recommended install method.
-
-
-pip3 install -U pip poetry
-Run the following after Poetry has been installed, which will create a virtualenv and install all dependencies and custom Sphinx extensions. It also comes with a custom cli tool `hicli` to do all kinds of boring chores. See `hicli --help` for docs or [the hicli README](cli/README.md)
-
-```sh
-poetry install
-```
-
-**Activate the virtualenv in a new shell**
-```sh
-poetry shell
-```
-
-## Build the project
-```sh
-hicli build
-```
-
-## Run a webserver
-```
-python -m http.server _build 8000
-```
-
-# Build html
-Finally, go to the template folder and run the command:
-```bash
-make html
-```
-You can now edit the template in /template/chapter01.rst and compile the html file with the make html command. The html pages are in /template/_build/html.
-
-You might want to debug this properly by loading the `_build/html/index.html` through a webserver.
-
-```
-python3 -m http.server 8000
 ```
 
 Sphinx
