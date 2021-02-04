@@ -147,7 +147,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build-${{needs.build.outputs.branch_name}}
-      - run: ls ./${{env.GITHUB_WORKSPACE}}/html
+      - run: ls ./${{env.GITHUB_WORKSPACE}}
       #----------------------------------------------
       # zip build artifact
       #----------------------------------------------
