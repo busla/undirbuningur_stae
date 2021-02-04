@@ -53,7 +53,7 @@ jobs:
       # install dependencies if cache does not exist
       #----------------------------------------------
       - name: Install dependencies
-        run: poetry install
+        run: poetry install --no-dev
         if: steps.cached_poetry_dependencies.outputs.cache-hit != 'true'
   build:
     needs: setup
@@ -102,7 +102,7 @@ jobs:
       #----------------------------------------------
       - name: Install dependencies
         if: steps.cached_poetry_dependencies.outputs.cache-hit != 'true'
-        run: poetry install
+        run: poetry install --no-dev
       #----------------------------------------------
       # Build undirbuningur_stae
       #----------------------------------------------
@@ -110,7 +110,7 @@ jobs:
         if: steps.cached_build.outputs.cache-hit != 'true'
         run: |
           source .venv/bin/activate
-          poetry run hicli build docs _build/html -b dirhtml
+          poetry run hicli build docs _build -b dirhtml
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
       #----------------------------------------------
@@ -151,7 +151,7 @@ jobs:
       #----------------------------------------------
       # zip build artifact
       #----------------------------------------------
-      - run: zip -r build ./${{env.GITHUB_WORKSPACE}}/html
+      - run: zip -r build ./${{env.GITHUB_WORKSPACE}}
         name: Zip build output
       - name: Create pre-release
         if: needs.build.outputs.branch_name != 'master'
