@@ -151,7 +151,7 @@ jobs:
       #----------------------------------------------
       # zip build artifact
       #----------------------------------------------
-      - run: zip -r build ./${{env.GITHUB_WORKSPACE}}/html ./${{env.GITHUB_WORKSPACE}}/doctrees
+      - run: zip -r build ./${{env.GITHUB_WORKSPACE}}/html
         name: Zip build output
       - name: Create pre-release
         if: needs.build.outputs.branch_name != 'master'
@@ -199,9 +199,6 @@ jobs:
           asset_content_type: application/zip
   deploy-feature-branch:
     if: ${{needs.build.outputs.branch_name != 'master'}}
-    # environment:
-    #   name: feature
-    #   url: https://notendur.hi.is/jlg2/staging/edbook/${{ needs.build.outputs.branch_name }}/_build/html/source
     needs: [build, tag-and-release]
     name: Deploy feature branch
     runs-on: ubuntu-20.04
@@ -225,13 +222,10 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: html,doctrees
+          source: html
           target: ".public_html/staging/edbook/${{ needs.build.outputs.branch_name }}"
   deploy-production-branch:
     if: ${{needs.build.outputs.branch_name == 'master'}}
-    # environment:
-    #   name: production
-    #   url: https://notendur.hi.is/jlg2/production/edbook/${{ needs.build.outputs.branch_name }}/_build/html/source
     needs: [build, tag-and-release]
     name: Deploy production branch
     runs-on: ubuntu-20.04
@@ -252,5 +246,5 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: html,doctrees
-          target: ".public_html/production/edbook/${{ needs.build.outputs.branch_name }}"
+          source: html
+          target: ${{ secrets.HI_PRODUCTION_PATH }}
