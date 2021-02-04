@@ -29,3 +29,6 @@ Efnisyfirlit
    :glob:
 
    Kafli*
+
+..
+   _comment debug
