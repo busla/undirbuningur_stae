@@ -110,7 +110,7 @@ jobs:
         if: steps.cached_build.outputs.cache-hit != 'true'
         run: |
           source .venv/bin/activate
-          poetry run hicli build docs _build -b dirhtml
+          poetry run hicli build docs _build/html -b dirhtml
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
       #----------------------------------------------
@@ -125,7 +125,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: build-${{steps.extract_branch.outputs.branch_name}}
-          path: _build
+          path: _build/html
   tag-and-release:
     needs: build
     name: Tag and release
@@ -147,11 +147,11 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build-${{needs.build.outputs.branch_name}}
-      - run: ls ./${{env.GITHUB_WORKSPACE}}
+      - run: ls ./${{env.GITHUB_WORKSPACE}}/html
       #----------------------------------------------
       # zip build artifact
       #----------------------------------------------
-      - run: zip -r build ./${{env.GITHUB_WORKSPACE}}
+      - run: zip -r build ./${{env.GITHUB_WORKSPACE}}/html
         name: Zip build output
       - name: Create pre-release
         if: needs.build.outputs.branch_name != 'master'
