@@ -151,7 +151,7 @@ jobs:
       #----------------------------------------------
       # zip build artifact
       #----------------------------------------------
-      - run: zip -r build ./${{env.GITHUB_WORKSPACE}}/html
+      - run: zip -r build ./${{env.GITHUB_WORKSPACE}}
         name: Zip build output
       - name: Create pre-release
         if: needs.build.outputs.branch_name != 'master'
