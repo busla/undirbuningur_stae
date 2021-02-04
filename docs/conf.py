@@ -94,7 +94,7 @@ source_suffix = ".rst"
 # source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = "source/index"
+master_doc = "index"
 
 # General information about the project.
 # SET PROJECT INFO HERE
@@ -200,6 +200,7 @@ html_favicon = "_static/favicon_2.ico"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 
+# html_copy_source = False
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
 # directly to the root of the documentation.

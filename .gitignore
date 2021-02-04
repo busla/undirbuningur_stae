@@ -17,6 +17,6 @@ var/
 __pycache__
 .vscode
 .python-version
-_build
+_build/
 .env
 .mypy_cache

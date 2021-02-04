@@ -1,4 +1,7 @@
 import logging
+import os
+from pathlib import Path
+import shutil
 from subprocess import call
 from typing import List
 import typer
@@ -42,7 +45,7 @@ def cmd_build(
     ),
     builder: str = typer.Option("html", "--builder", "-b", help="Builder type"),
     clean: bool = typer.Option(
-        False, help="Delete the build directory before building."
+        True, help="Delete the build directory before building."
     ),
 ):
     """
@@ -52,7 +55,9 @@ def cmd_build(
         msg_warning(f"Deleting {build_dir} before building ...")
         call(["sphinx-build", "-M", "clean", source_dir, build_dir])
     msg_info(f"Building edbook from {source_dir}")
-    call(["sphinx-build", "-M", builder, source_dir, build_dir])
+
+    call(["sphinx-build", source_dir, build_dir])
+
     msg_success(f"Done!")
 
 

@@ -17,15 +17,24 @@ poetry install
 ```
 
 ## Run development server
-Run a dev server for local development. This will open a tab in your browser at http://localhost:8000 which will update each time you you save a document in the [source](docs/source)  directory.
+Run a dev server for local development. This will open a tab in your browser at http://localhost:8000 which will update each time you you save a document in the [source](docs/source) directory.
+
+You can pass `sphinx` arguments as-is like so:
+```sh
+-b=builder, -a, -E, -d=path, -j=N, -c=path, -C, -D=setting=value, -t=tag, -A=name=value, -n, -v, -q, -Q, -w=file, -W, -T, -N, -P
 ```
-hicli autobuild --open-browser
+
+> 🛈 By using the `dirhtml` builder instead of `html` will build a single directory per document. Makes for prettier URLs (no .html) if served from a webserver. See [builder options](https://www.sphinx-doc.org/en/master/man/sphinx-build.html#options)
+
+```sh
+hicli autobuild --open-browser -b=dirhtml
 ```
 
 ## Build the project
-> 🛈 Building the project is not needed if you are using the `autobuild` command.  
+> 🛈 Building the project is not needed if you are using the `autobuild` command. Sphinx arguments will also be respected.
+
 ```sh
-hicli build
+hicli build -b=dirhtml
 ```
 
 ## Contribute
