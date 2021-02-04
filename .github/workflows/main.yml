@@ -110,7 +110,7 @@ jobs:
         if: steps.cached_build.outputs.cache-hit != 'true'
         run: |
           source .venv/bin/activate
-          poetry run hicli build
+          poetry run hicli build docs _build/html -b dirhtml
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
       #----------------------------------------------
