@@ -42,9 +42,6 @@ jobs:
         with:
           virtualenvs-create: true
           virtualenvs-in-project: true
-      - name: debug-cache
-        run: |
-          ls -al ./${{env.GITHUB_WORKSPACE}}
       #----------------------------------------------
       # set build cache name
       #----------------------------------------------
@@ -131,7 +128,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ${{needs.setup.outputs.artifact}}
-      - run: ls ./${{env.GITHUB_WORKSPACE}}
       #----------------------------------------------
       # zip build artifact
       #----------------------------------------------
@@ -165,7 +161,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_prerelease.outputs.upload_url }}
-          asset_path: ${{needs.setup.outputs.artifact}}
+          asset_path: ${{ needs.setup.outputs.artifact }}
           asset_name: build-${{ steps.bump_version.outputs.tag }}.zip
           asset_content_type: application/zip
       - name: Upload release asset
@@ -180,8 +176,8 @@ jobs:
           asset_name: build-${{ steps.bump_version.outputs.tag }}.zip
           asset_content_type: application/zip
   deploy-feature-branch:
-    if: ${{needs.setup.outputs.branch_name != 'master'}}
     needs: [setup, tag-and-release]
+    if: needs.setup.outputs.branch_name != 'master'
     name: Deploy feature branch
     runs-on: ubuntu-20.04
     steps:
@@ -213,7 +209,7 @@ jobs:
           source: artifact
           target: ".public_html/staging/edbook/${{ needs.setup.outputs.branch_name }}"
   deploy-production-branch:
-    if: ${{needs.setup.outputs.branch_name == 'master'}}
+    if: needs.setup.outputs.branch_name == 'master'
     needs: [setup, tag-and-release]
     name: Deploy production branch
     runs-on: ubuntu-20.04
