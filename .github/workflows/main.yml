@@ -60,7 +60,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: .venv
-          key: steps.extract_cache.outputs.venv
+          key: ${{steps.extract_cache.outputs.venv}}
       #----------------------------------------------
       # Get cached build
       #----------------------------------------------
@@ -69,7 +69,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: .
-          key: steps.extract_cache.outputs.build
+          key: ${{steps.extract_cache.outputs.build}}
       #----------------------------------------------
       # install dependencies if cache does not exist
       #----------------------------------------------
@@ -90,7 +90,7 @@ jobs:
         if: steps.cached_build.outputs.cache-hit != 'true'
         run: |
           ls -al .
-          zip -r steps.extract_cache.outputs.build _build
+          zip -r ${{steps.extract_cache.outputs.build}} _build
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
       #----------------------------------------------
