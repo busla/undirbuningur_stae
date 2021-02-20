@@ -64,6 +64,7 @@ jobs:
       - name: build
         if: steps.cached_build.outputs.cache-hit != 'true'
         run: |
+          ls .
           source .venv/bin/activate
           poetry run hicli build -b dirhtml
           zip -r artifacts/build-${{ runner.os }}-${{ hashFiles('docs') }} _build
