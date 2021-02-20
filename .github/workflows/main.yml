@@ -44,6 +44,15 @@ jobs:
         run: |
           ls -alR ./${{env.GITHUB_WORKSPACE}}
       #----------------------------------------------
+      # set build cache name
+      #----------------------------------------------
+      - name: Extract build cache name
+        id: extract_cache
+        shell: bash
+        run: |
+          echo "::set-output name=build::$(echo build-${{ runner.os }}-${{ hashFiles('docs') }})"
+          echo "::set-output name=venv::$(echo venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }})"
+      #----------------------------------------------
       # load cached venv if cache exists
       #----------------------------------------------
       - name: Load cached venv
@@ -51,7 +60,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: .venv
-          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+          key: steps.extract_cache.outputs.venv
       #----------------------------------------------
       # Get cached build
       #----------------------------------------------
@@ -59,8 +68,8 @@ jobs:
         id: cached_build
         uses: actions/cache@v2
         with:
-          path: artifacts
-          key: build-${{ runner.os }}-${{ hashFiles('docs') }}
+          path: .
+          key: steps.extract_cache.outputs.build
       #----------------------------------------------
       # install dependencies if cache does not exist
       #----------------------------------------------
@@ -81,7 +90,7 @@ jobs:
         if: steps.cached_build.outputs.cache-hit != 'true'
         run: |
           ls -al .
-          zip -r build-${{ runner.os }}-${{ hashFiles('docs') }} _build
+          zip -r steps.extract_cache.outputs.build _build
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
       #----------------------------------------------
@@ -95,8 +104,8 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
-          name: build-${{steps.extract_branch.outputs.branch_name}}
-          path: artifact/build-${{steps.extract_branch.outputs.branch_name}}.zip
+          name: build-${{steps.extract_cache.outputs.build}}
+          path: build-${{steps.extract_cache.outputs.build}}.zip
   tag-and-release:
     needs: setup
     name: Tag and release
@@ -117,7 +126,7 @@ jobs:
       - name: Get build artifact
         uses: actions/download-artifact@v2
         with:
-          name: build-${{needs.build.outputs.branch_name}}
+          name: build-${{needs.setup.outputs.extract_cache.build}}
       - run: ls ./${{env.GITHUB_WORKSPACE}}
       #----------------------------------------------
       # zip build artifact
