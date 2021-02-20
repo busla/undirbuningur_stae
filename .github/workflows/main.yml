@@ -93,6 +93,7 @@ jobs:
         run: |
           ls -al .
           zip -r ${{steps.extract_cache.outputs.build}} _build
+          ls -al .
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
       #----------------------------------------------
