@@ -156,7 +156,7 @@ jobs:
           asset_content_type: application/zip
   deploy-feature-branch:
     if: ${{needs.build.outputs.branch_name != 'master'}}
-    needs: [build, tag-and-release]
+    needs: [setup, tag-and-release]
     name: Deploy feature branch
     runs-on: ubuntu-20.04
     steps:
