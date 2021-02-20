@@ -23,7 +23,7 @@ jobs:
     name: Setup and build
     runs-on: ubuntu-20.04
     outputs:
-      build: ${{ steps.extract_cache.outputs.build }}
+      artifact: ${{ steps.zip_build.outputs.artifact }}
     steps:
       #----------------------------------------------
       # check-out repo and set-up python
@@ -89,11 +89,13 @@ jobs:
           poetry run hicli build -b dirhtml
           ls .
       - name: zip-build
+        id: zip_build
         if: steps.cached_build.outputs.cache-hit != 'true'
         run: |
           ls -al .
           zip -r ${{steps.extract_cache.outputs.build}} _build
           ls -al .
+          echo "::set-output name=artifact::$(echo ${{steps.extract_cache.outputs.build}}.zip)"
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
       #----------------------------------------------
@@ -107,8 +109,7 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{steps.extract_cache.outputs.build}}
-          path: ${{steps.extract_cache.outputs.build}}.zip
+          path: ${{steps.zip_build.outputs.artifact}}
   tag-and-release:
     needs: setup
     name: Tag and release
@@ -129,15 +130,13 @@ jobs:
       - name: Get build artifact
         uses: actions/download-artifact@v2
         with:
-          name: ${{needs.setup.outputs.build}}
+          name: ${{needs.setup.outputs.artifact}}
       - run: ls ./${{env.GITHUB_WORKSPACE}}
       #----------------------------------------------
       # zip build artifact
       #----------------------------------------------
-      - run: zip -r build ./${{env.GITHUB_WORKSPACE}}
-        name: Zip build output
       - name: Create pre-release
-        if: needs.build.outputs.branch_name != 'master'
+        if: needs.setup.outputs.branch_name != 'master'
         id: create_prerelease
         uses: actions/create-release@v1
         env:
@@ -148,7 +147,7 @@ jobs:
           draft: false
           prerelease: true
       - name: Create release
-        if: needs.build.outputs.branch_name == 'master'
+        if: needs.setup.outputs.branch_name == 'master'
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -159,40 +158,46 @@ jobs:
           draft: false
           prerelease: false
       - name: Upload pre-release asset
-        if: needs.build.outputs.branch_name != 'master'
+        if: needs.setup.outputs.branch_name != 'master'
         id: upload_prerelease_asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_prerelease.outputs.upload_url }}
-          asset_path: ./build.zip
+          asset_path: ${{needs.setup.outputs.artifact}}
           asset_name: build-${{ steps.bump_version.outputs.tag }}.zip
           asset_content_type: application/zip
       - name: Upload release asset
-        if: needs.build.outputs.branch_name == 'master'
+        if: needs.setup.outputs.branch_name == 'master'
         id: upload_release_asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build.zip
+          asset_path: ${{needs.setup.outputs.artifact}}
           asset_name: build-${{ steps.bump_version.outputs.tag }}.zip
           asset_content_type: application/zip
   deploy-feature-branch:
-    if: ${{needs.build.outputs.branch_name != 'master'}}
+    if: ${{needs.setup.outputs.branch_name != 'master'}}
     needs: [setup, tag-and-release]
     name: Deploy feature branch
     runs-on: ubuntu-20.04
     steps:
       #----------------------------------------------
-      # Get build artifact from build job
+      # Get build artifact from setup job
       #----------------------------------------------
       - name: Get build artifact
         uses: actions/download-artifact@v2
         with:
-          name: build-${{needs.build.outputs.branch_name}}
+          name: ${{needs.setup.outputs.artifact}}
+      #----------------------------------------------
+      # Unzip to comply with scp-action
+      #----------------------------------------------
+      - name: Unzip build
+        run: |
+          unzip ${{needs.setup.outputs.artifact}} -d artifact
       #----------------------------------------------
       # Delete dir on remote server, upload build tar and extract on remote server.
       #----------------------------------------------
@@ -205,8 +210,8 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: build-${{needs.build.outputs.branch_name}}
-          target: ".public_html/staging/edbook/${{ needs.build.outputs.branch_name }}"
+          source: artifact
+          target: ".public_html/staging/edbook/${{ needs.setup.outputs.branch_name }}"
   deploy-production-branch:
     if: ${{needs.setup.outputs.branch_name == 'master'}}
     needs: [setup, tag-and-release]
@@ -219,7 +224,13 @@ jobs:
       - name: Get build artifact
         uses: actions/download-artifact@v2
         with:
-          name: build-${{needs.build.outputs.branch_name}}
+          name: build-${{needs.setup.outputs.branch_name}}
+      #----------------------------------------------
+      # Unzip to comply with scp-action
+      #----------------------------------------------
+      - name: Unzip build
+        run: |
+          unzip ${{needs.setup.outputs.artifact}} -d artifact
       - name: Cleanup and deploy production
         id: cleanup_deploy_production
         uses: appleboy/scp-action@master
@@ -229,5 +240,5 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: html
+          source: artifact
           target: ${{ secrets.HI_PRODUCTION_PATH }}
