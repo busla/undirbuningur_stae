@@ -217,5 +217,5 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: artifact
+          source: ./
           target: ${{ secrets.HI_PRODUCTION_PATH }}
