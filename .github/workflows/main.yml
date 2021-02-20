@@ -63,17 +63,13 @@ jobs:
       #----------------------------------------------
       - name: build
         run: |
-          ls -al .
           source .venv/bin/activate
           poetry run hicli build -b dirhtml
-          ls .
       - name: zip-build
         id: zip_build
         # Use zip instead of tar to support non-tech users that want to download the artifact
         run: |
-          ls -al .
           cd _build && zip -r build-${{ runner.os }}-${{ hashFiles('docs') }} *
-          ls -al .
           echo "::set-output name=artifact::$(echo build-${{ runner.os }}-${{ hashFiles('docs') }}.zip)"
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
@@ -177,7 +173,7 @@ jobs:
       - name: Unzip build
         run: |
           unzip ${{needs.setup.outputs.artifact}}
-          ls -al .
+          rm ${{needs.setup.outputs.artifact}}
       #----------------------------------------------
       # Delete dir on remote server, upload build tar and extract on remote server.
       #----------------------------------------------
@@ -211,6 +207,7 @@ jobs:
       - name: Unzip build
         run: |
           unzip ${{needs.setup.outputs.artifact}}
+          rm ${{needs.setup.outputs.artifact}}
       - name: Cleanup and deploy production
         id: cleanup_deploy_production
         uses: appleboy/scp-action@master
