@@ -40,6 +40,9 @@ jobs:
         with:
           virtualenvs-create: true
           virtualenvs-in-project: true
+      - name: debug-cache
+        run: |
+          ls -alR ./${{env.GITHUB_WORKSPACE}}
       #----------------------------------------------
       # load cached venv if cache exists
       #----------------------------------------------
