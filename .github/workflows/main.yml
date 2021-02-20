@@ -46,11 +46,11 @@ jobs:
       # load cached venv if cache exists
       #----------------------------------------------
       - name: Load cached venv
-        id: cached_poetry_dependencies
+        id: cached-poetry-dependencies
         uses: actions/cache@v2
         with:
           path: .venv
-          key: ${{steps.extract_cache.outputs.venv}}
+          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
       #----------------------------------------------
       # install dependencies if cache does not exist
       #----------------------------------------------
