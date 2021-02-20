@@ -182,8 +182,8 @@ jobs:
           source: build-${{needs.build.outputs.branch_name}}
           target: ".public_html/staging/edbook/${{ needs.build.outputs.branch_name }}"
   deploy-production-branch:
-    if: ${{needs.build.outputs.branch_name == 'master'}}
-    needs: [build, tag-and-release]
+    if: ${{needs.setup.outputs.branch_name == 'master'}}
+    needs: [setup, tag-and-release]
     name: Deploy production branch
     runs-on: ubuntu-20.04
     steps:
