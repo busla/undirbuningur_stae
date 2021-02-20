@@ -20,7 +20,7 @@ env:
   DEFAULT_BRANCH: master
 jobs:
   setup:
-    name: Setup
+    name: Setup and build
     runs-on: ubuntu-20.04
     steps:
       #----------------------------------------------
@@ -50,67 +50,24 @@ jobs:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
       #----------------------------------------------
-      # install dependencies if cache does not exist
-      #----------------------------------------------
-      - name: Install dependencies
-        run: poetry install --no-dev
-        if: steps.cached_poetry_dependencies.outputs.cache-hit != 'true'
-  build:
-    needs: setup
-    name: Build
-    runs-on: ubuntu-20.04
-    outputs:
-      branch_name: ${{steps.extract_branch.outputs.branch_name}}
-    steps:
-      #----------------------------------------------
-      # check-out repo and set-up python
-      #----------------------------------------------
-      - name: Check out repository
-        uses: actions/checkout@v2
-      - name: Set up python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-      #----------------------------------------------
-      # install & configure poetry
-      #----------------------------------------------
-      - name: Install Poetry
-        uses: snok/install-poetry@v1.1.1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-      #----------------------------------------------
-      # load cached venv if cache exists
-      #----------------------------------------------
-      - name: Load cached venv
-        id: cached_poetry_dependencies
-        uses: actions/cache@v2
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-      #----------------------------------------------
-      # Instead of rebuilding lets check the hash of the docs dir and use cache if there are no changes
+      # Get cached build
       #----------------------------------------------
       - name: Load cached build
         id: cached_build
         uses: actions/cache@v2
         with:
-          path: _build
+          path: artifacts
           key: build-${{ runner.os }}-${{ hashFiles('docs') }}
       #----------------------------------------------
-      # install dependencies if cache does not exist
-      #----------------------------------------------
-      - name: Install dependencies
-        if: steps.cached_poetry_dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-dev
-      #----------------------------------------------
-      # Build undirbuningur_stae
+      # Build
       #----------------------------------------------
       - name: build
         if: steps.cached_build.outputs.cache-hit != 'true'
         run: |
           source .venv/bin/activate
-          poetry run hicli build docs _build/html -b dirhtml
+          poetry run hicli build -b dirhtml
+          zip -r artifacts/build-${{ runner.os }}-${{ hashFiles('docs') }} _build
+          ls .
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
       #----------------------------------------------
@@ -119,15 +76,15 @@ jobs:
         shell: bash
         run: echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/})"
       #----------------------------------------------
-      # check-out repo and set-up python
+      # Upload build artifact
       #----------------------------------------------
-      - name: Store build artifact
+      - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
           name: build-${{steps.extract_branch.outputs.branch_name}}
-          path: _build/html
+          path: artifact/build-${{steps.extract_branch.outputs.branch_name}}.zip
   tag-and-release:
-    needs: build
+    needs: setup
     name: Tag and release
     runs-on: ubuntu-20.04
     steps:
@@ -222,7 +179,7 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: html
+          source: build-${{needs.build.outputs.branch_name}}
           target: ".public_html/staging/edbook/${{ needs.build.outputs.branch_name }}"
   deploy-production-branch:
     if: ${{needs.build.outputs.branch_name == 'master'}}
