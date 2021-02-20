@@ -70,11 +70,15 @@ jobs:
       - name: build
         if: steps.cached_build.outputs.cache-hit != 'true'
         run: |
-          ls . -al
+          ls -al .
           source .venv/bin/activate
           poetry run hicli build -b dirhtml
-          zip -r artifacts/build-${{ runner.os }}-${{ hashFiles('docs') }} _build
           ls .
+      - name: zip-build
+        if: steps.cached_build.outputs.cache-hit != 'true'
+        run: |
+          ls -al .
+          zip -r build-${{ runner.os }}-${{ hashFiles('docs') }} _build
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
       #----------------------------------------------
