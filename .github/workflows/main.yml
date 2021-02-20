@@ -42,7 +42,7 @@ jobs:
           virtualenvs-in-project: true
       - name: debug-cache
         run: |
-          ls -alR ./${{env.GITHUB_WORKSPACE}}
+          ls -al ./${{env.GITHUB_WORKSPACE}}
       #----------------------------------------------
       # set build cache name
       #----------------------------------------------
@@ -104,8 +104,8 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
-          name: build-${{steps.extract_cache.outputs.build}}
-          path: build-${{steps.extract_cache.outputs.build}}.zip
+          name: ${{steps.extract_cache.outputs.build}}
+          path: ${{steps.extract_cache.outputs.build}}.zip
   tag-and-release:
     needs: setup
     name: Tag and release
