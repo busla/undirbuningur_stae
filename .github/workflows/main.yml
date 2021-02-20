@@ -63,6 +63,7 @@ jobs:
       #----------------------------------------------
       - name: build
         run: |
+          ls -al .
           source .venv/bin/activate
           poetry run hicli build -b dirhtml
       - name: zip-build
