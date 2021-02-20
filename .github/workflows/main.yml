@@ -20,47 +20,11 @@ env:
   DEFAULT_BRANCH: master
 jobs:
   setup:
-    name: Setup
-    runs-on: ubuntu-20.04
-    steps:
-      #----------------------------------------------
-      # check-out repo and set-up python
-      #----------------------------------------------
-      - name: Check out repository
-        uses: actions/checkout@v2
-      - name: Set up python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-      #----------------------------------------------
-      # install & configure poetry
-      #----------------------------------------------
-      - name: Install Poetry
-        uses: snok/install-poetry@v1.1.1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-      #----------------------------------------------
-      # load cached venv if cache exists
-      #----------------------------------------------
-      - name: Load cached venv
-        id: cached_poetry_dependencies
-        uses: actions/cache@v2
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-      #----------------------------------------------
-      # install dependencies if cache does not exist
-      #----------------------------------------------
-      - name: Install dependencies
-        run: poetry install
-        if: steps.cached_poetry_dependencies.outputs.cache-hit != 'true'
-  build:
-    needs: setup
-    name: Build
+    name: Setup and build
     runs-on: ubuntu-20.04
     outputs:
-      branch_name: ${{steps.extract_branch.outputs.branch_name}}
+      artifact: ${{ steps.zip_build.outputs.artifact }}
+      branch_name: ${{ steps.extract_branch.outputs.branch_name }}
     steps:
       #----------------------------------------------
       # check-out repo and set-up python
@@ -83,34 +47,34 @@ jobs:
       # load cached venv if cache exists
       #----------------------------------------------
       - name: Load cached venv
-        id: cached_poetry_dependencies
+        id: cached-poetry-dependencies
         uses: actions/cache@v2
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
       #----------------------------------------------
-      # Instead of rebuilding lets check the hash of the docs dir and use cache if there are no changes
-      #----------------------------------------------
-      - name: Load cached build
-        id: cached_build
-        uses: actions/cache@v2
-        with:
-          path: _build
-          key: build-${{ runner.os }}-${{ hashFiles('docs') }}
-      #----------------------------------------------
       # install dependencies if cache does not exist
       #----------------------------------------------
       - name: Install dependencies
-        if: steps.cached_poetry_dependencies.outputs.cache-hit != 'true'
         run: poetry install
+        if: steps.cached_poetry_dependencies.outputs.cache-hit != 'true'
       #----------------------------------------------
-      # Build undirbuningur_stae
+      # Build
       #----------------------------------------------
       - name: build
-        if: steps.cached_build.outputs.cache-hit != 'true'
         run: |
+          ls -al .
           source .venv/bin/activate
-          poetry run hicli build docs _build/html -b dirhtml
+          poetry run hicli build -b dirhtml
+          ls .
+      - name: zip-build
+        id: zip_build
+        # Use zip instead of tar to support non-tech users that want to download the artifact
+        run: |
+          ls -al .
+          cd _build && zip -r build-${{ runner.os }}-${{ hashFiles('docs') }} *
+          ls -al .
+          echo "::set-output name=artifact::$(echo build-${{ runner.os }}-${{ hashFiles('docs') }}.zip)"
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
       #----------------------------------------------
@@ -119,15 +83,15 @@ jobs:
         shell: bash
         run: echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/})"
       #----------------------------------------------
-      # check-out repo and set-up python
+      # Upload build artifact
       #----------------------------------------------
-      - name: Store build artifact
+      - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
-          name: build-${{steps.extract_branch.outputs.branch_name}}
-          path: _build
+          name: ${{steps.zip_build.outputs.artifact}}
+          path: _build/${{steps.zip_build.outputs.artifact}}
   tag-and-release:
-    needs: build
+    needs: setup
     name: Tag and release
     runs-on: ubuntu-20.04
     steps:
@@ -146,15 +110,12 @@ jobs:
       - name: Get build artifact
         uses: actions/download-artifact@v2
         with:
-          name: build-${{needs.build.outputs.branch_name}}
-      - run: ls ./${{env.GITHUB_WORKSPACE}}
+          name: ${{needs.setup.outputs.artifact}}
       #----------------------------------------------
       # zip build artifact
       #----------------------------------------------
-      - run: zip -r build ./${{env.GITHUB_WORKSPACE}}/html
-        name: Zip build output
       - name: Create pre-release
-        if: needs.build.outputs.branch_name != 'master'
+        if: needs.setup.outputs.branch_name != 'master'
         id: create_prerelease
         uses: actions/create-release@v1
         env:
@@ -165,7 +126,7 @@ jobs:
           draft: false
           prerelease: true
       - name: Create release
-        if: needs.build.outputs.branch_name == 'master'
+        if: needs.setup.outputs.branch_name == 'master'
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -176,40 +137,47 @@ jobs:
           draft: false
           prerelease: false
       - name: Upload pre-release asset
-        if: needs.build.outputs.branch_name != 'master'
+        if: needs.setup.outputs.branch_name != 'master'
         id: upload_prerelease_asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_prerelease.outputs.upload_url }}
-          asset_path: ./build.zip
+          asset_path: ${{ needs.setup.outputs.artifact }}
           asset_name: build-${{ steps.bump_version.outputs.tag }}.zip
           asset_content_type: application/zip
       - name: Upload release asset
-        if: needs.build.outputs.branch_name == 'master'
+        if: needs.setup.outputs.branch_name == 'master'
         id: upload_release_asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build.zip
+          asset_path: ${{needs.setup.outputs.artifact}}
           asset_name: build-${{ steps.bump_version.outputs.tag }}.zip
           asset_content_type: application/zip
   deploy-feature-branch:
-    if: ${{needs.build.outputs.branch_name != 'master'}}
-    needs: [build, tag-and-release]
+    needs: [setup, tag-and-release]
+    if: needs.setup.outputs.branch_name != 'master'
     name: Deploy feature branch
     runs-on: ubuntu-20.04
     steps:
       #----------------------------------------------
-      # Get build artifact from build job
+      # Get build artifact from setup job
       #----------------------------------------------
       - name: Get build artifact
         uses: actions/download-artifact@v2
         with:
-          name: build-${{needs.build.outputs.branch_name}}
+          name: ${{needs.setup.outputs.artifact}}
+      #----------------------------------------------
+      # Unzip to comply with scp-action
+      #----------------------------------------------
+      - name: Unzip build
+        run: |
+          unzip ${{needs.setup.outputs.artifact}}
+          ls -al .
       #----------------------------------------------
       # Delete dir on remote server, upload build tar and extract on remote server.
       #----------------------------------------------
@@ -222,11 +190,11 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: html
-          target: ".public_html/staging/edbook/${{ needs.build.outputs.branch_name }}"
+          source: ./
+          target: ".public_html/staging/edbook/${{ needs.setup.outputs.branch_name }}"
   deploy-production-branch:
-    if: ${{needs.build.outputs.branch_name == 'master'}}
-    needs: [build, tag-and-release]
+    if: needs.setup.outputs.branch_name == 'master'
+    needs: [setup, tag-and-release]
     name: Deploy production branch
     runs-on: ubuntu-20.04
     steps:
@@ -236,7 +204,13 @@ jobs:
       - name: Get build artifact
         uses: actions/download-artifact@v2
         with:
-          name: build-${{needs.build.outputs.branch_name}}
+          name: ${{needs.setup.outputs.artifact}}
+      #----------------------------------------------
+      # Unzip to comply with scp-action
+      #----------------------------------------------
+      - name: Unzip build
+        run: |
+          unzip ${{needs.setup.outputs.artifact}}
       - name: Cleanup and deploy production
         id: cleanup_deploy_production
         uses: appleboy/scp-action@master
@@ -246,5 +220,5 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: html
+          source: artifact
           target: ${{ secrets.HI_PRODUCTION_PATH }}
