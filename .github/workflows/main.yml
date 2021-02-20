@@ -176,7 +176,8 @@ jobs:
       #----------------------------------------------
       - name: Unzip build
         run: |
-          unzip ${{needs.setup.outputs.artifact}} -d /${{ needs.setup.outputs.branch_name }}/
+          unzip ${{needs.setup.outputs.artifact}}
+          ls -al .
       #----------------------------------------------
       # Delete dir on remote server, upload build tar and extract on remote server.
       #----------------------------------------------
@@ -189,7 +190,7 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: artifact
+          source: ./
           target: ".public_html/staging/edbook/${{ needs.setup.outputs.branch_name }}"
   deploy-production-branch:
     if: needs.setup.outputs.branch_name == 'master'
