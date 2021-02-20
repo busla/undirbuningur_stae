@@ -59,6 +59,12 @@ jobs:
           path: artifacts
           key: build-${{ runner.os }}-${{ hashFiles('docs') }}
       #----------------------------------------------
+      # install dependencies if cache does not exist
+      #----------------------------------------------
+      - name: Install dependencies
+        run: poetry install
+        if: steps.cached_poetry_dependencies.outputs.cache-hit != 'true'
+      #----------------------------------------------
       # Build
       #----------------------------------------------
       - name: build
