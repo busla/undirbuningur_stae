@@ -22,6 +22,8 @@ jobs:
   setup:
     name: Setup and build
     runs-on: ubuntu-20.04
+    outputs:
+      artifact: ${{ steps.zip_build.outputs.artifact }}
     steps:
       #----------------------------------------------
       # check-out repo and set-up python
