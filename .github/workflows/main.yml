@@ -43,15 +43,6 @@ jobs:
           virtualenvs-create: true
           virtualenvs-in-project: true
       #----------------------------------------------
-      # set build cache name
-      #----------------------------------------------
-      - name: Extract build cache name
-        id: extract_cache
-        shell: bash
-        run: |
-          echo "::set-output name=build::$(echo build-${{ runner.os }}-${{ hashFiles('docs') }})"
-          echo "::set-output name=venv::$(echo venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }})"
-      #----------------------------------------------
       # load cached venv if cache exists
       #----------------------------------------------
       - name: Load cached venv
@@ -60,15 +51,6 @@ jobs:
         with:
           path: .venv
           key: ${{steps.extract_cache.outputs.venv}}
-      #----------------------------------------------
-      # Get cached build
-      #----------------------------------------------
-      - name: Load cached build
-        id: cached_build
-        uses: actions/cache@v2
-        with:
-          path: .
-          key: ${{steps.extract_cache.outputs.build}}
       #----------------------------------------------
       # install dependencies if cache does not exist
       #----------------------------------------------
@@ -79,7 +61,6 @@ jobs:
       # Build
       #----------------------------------------------
       - name: build
-        if: steps.cached_build.outputs.cache-hit != 'true'
         run: |
           ls -al .
           source .venv/bin/activate
@@ -87,12 +68,11 @@ jobs:
           ls .
       - name: zip-build
         id: zip_build
-        if: steps.cached_build.outputs.cache-hit != 'true'
         run: |
           ls -al .
-          zip -r ${{steps.extract_cache.outputs.build}} _build
+          zip -r build-${{ runner.os }}-${{ hashFiles('docs') }} _build
           ls -al .
-          echo "::set-output name=artifact::$(echo ${{steps.extract_cache.outputs.build}}.zip)"
+          echo "::set-output name=artifact::$(echo build-${{ runner.os }}-${{ hashFiles('docs') }}.zip)"
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
       #----------------------------------------------
@@ -106,7 +86,7 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
-          path: ${{steps.extract_cache.outputs.build}}.zip
+          path: ${{steps.zip_build.outputs.artifact}}
   tag-and-release:
     needs: setup
     name: Tag and release
