@@ -65,6 +65,7 @@ jobs:
         run: poetry install
         if: steps.cached_poetry_dependencies.outputs.cache-hit != 'true'
   build-undirbuningur-stae:
+    needs: setup
     name: Build undirbuningur-stae
     runs-on: ubuntu-20.04
     outputs:
@@ -115,6 +116,7 @@ jobs:
           name: artifacts
           path: ${{steps.zip_build.outputs.artifact}}
   build-greining-1:
+    needs: setup
     name: Build Greining-1
     runs-on: ubuntu-20.04
     outputs:
