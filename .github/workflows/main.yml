@@ -202,7 +202,7 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: foundation_build
+          source: foundation_build/*
           target: ".public_html/staging/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}"
       - name: Deploy analysis-1 docs
         id: deploy_analysis_1_docs
@@ -213,7 +213,7 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: analysis_1_build
+          source: analysis_1_build/*
           target: ".public_html/staging/greining-1/${{ needs.setup.outputs.branch_name }}"
   deploy-production-branch:
     if: needs.setup.outputs.branch_name == 'master'
@@ -246,7 +246,7 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: foundation
+          source: foundation/*
           target: ".public_html/production/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}"
       - name: Deploy analysis-1 to prod
         id: deploy_analysis_1_prod
@@ -257,5 +257,5 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: analysis_1_build
+          source: analysis_1_build/*
           target: ".public_html/staging/greining-1/${{ needs.setup.outputs.branch_name }}"
