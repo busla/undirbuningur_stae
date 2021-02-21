@@ -234,7 +234,7 @@ jobs:
       - name: Unzip build
         # greining-1/monorepo-demo/artifacts/analysis_1_build/
         run: |
-          unzip ${{needs.setup.outputs.artifact}} && mv ${{ github.workspace }}/artifacts/* ${{ github.workspace }}/
+          unzip ${{needs.setup.outputs.artifact}}
           rm ${{needs.setup.outputs.artifact}}
           ls -al .
       - name: Deploy foundation to prod
@@ -246,7 +246,8 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: foundation/*
+          strip_components: 2
+          source: artifacts
           target: ".public_html/production/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}"
       - name: Deploy analysis-1 to prod
         id: deploy_analysis_1_prod
@@ -257,5 +258,6 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: analysis_1_build/*
+          strip_components: 2
+          source: artifacts
           target: ".public_html/staging/greining-1/${{ needs.setup.outputs.branch_name }}"
