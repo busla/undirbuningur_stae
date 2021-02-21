@@ -72,13 +72,14 @@ jobs:
         run: |
           echo ${{ github.workspace }}
           mkdir -p ${{ github.workspace }}/artifacts/foundation ${{ github.workspace }}/artifacts/analysis_1
+          ls ${{ github.workspace }}/artifacts
           export BUILD_PREFIX=build-foundation-${{ runner.os }}
           export FOUNDATION_HASH=${{ hashFiles('projects/foundation/') }}
           export ANALYSIS_1_HASH=${{ hashFiles('projects/analysis_1/') }}
           echo ${FOUNDATION_HASH}
-          cd ${{ github.workspace }}/foundation_build && zip -r "${BUILD_PREFIX}-${FOUNDATION_HASH}" * && mv "${BUILD_PREFIX}-${FOUNDATION_HASH}".zip ../artifacts/foundation
-          cd ${{ github.workspace }}/analysis_1 && zip -r "${BUILD_PREFIX}-${ANALYSIS_1_HASH}" * && mv "${BUILD_PREFIX}-${ANALYSIS_1_HASH}".zip ../artifacts/analysis_1 && cd ..
-          ls -alR artifacts
+          cd ${{ github.workspace }}/foundation_build && zip -r "${BUILD_PREFIX}-${FOUNDATION_HASH}" * && mv "${BUILD_PREFIX}-${FOUNDATION_HASH}".zip ${{ github.workspace }}/artifacts/foundation
+          cd ${{ github.workspace }}/analysis_1 && zip -r "${BUILD_PREFIX}-${ANALYSIS_1_HASH}" * && mv "${BUILD_PREFIX}-${ANALYSIS_1_HASH}".zip ${{ github.workspace }}/artifacts/analysis_1 && cd ..
+          ls -alR ${{ github.workspace }}/artifacts
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
       #----------------------------------------------
