@@ -1,9 +1,0 @@
-FROM python:3.8.5
-ENV PYTHONUNBUFFERED=TRUE
-RUN apt-get update && \
-    apt-get install -y curl inotify-tools
-WORKDIR /tmp
-COPY requirements.txt .
-COPY docker/run_web.sh .
-RUN pip install -U pip
-ENTRYPOINT [ "bash", "./run_web.sh" ]

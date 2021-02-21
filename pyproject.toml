@@ -18,13 +18,15 @@ Sphinx= "^3.2.1"
 sphinx-rtd-theme = "^0.5.0"
 sphinxcontrib-katex = "^0.6.1"
 paramiko= "^2.7.2"
-panoptoextension = {path = "./docs/_extensions/panoptoextension", develop = true}
-sagecell = {path = "docs/_extensions/sagecell-extension", develop = true}
-ggbextension = {path = "docs/_extensions/ggbextension", develop = true}
-scrolldepthextension = {path = "docs/_extensions/SphinxScrolldepth", develop = true}
-hoverroleextension = {path = "docs/_extensions/hoverrole", develop = true}
-toggleblock = {path = "docs/_extensions/toggleblock-extension", develop = true}
-custom-button = {path = "docs/_extensions/custom-button", develop = true}
+panoptoextension = {path = "extensions/panoptoextension", develop = true}
+sagecell = {path = "extensions/sagecell-extension", develop = true}
+ggbextension = {path = "extensions/ggbextension", develop = true}
+scrolldepthextension = {path = "extensions/SphinxScrolldepth", develop = true}
+hoverroleextension = {path = "extensions/hoverrole", develop = true}
+toggleblock = {path = "extensions/toggleblock-extension", develop = true}
+custom-button = {path = "extensions/custom-button", develop = true}
+datacamp = {path = "extensions/datacamp-extension", develop = true}
+google-analytics = {path = "extensions/google-analytics", develop = true}
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

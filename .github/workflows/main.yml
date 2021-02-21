@@ -1,10 +1,8 @@
+--- #----------------------------------------------
 #----------------------------------------------
 # TODO:
 #   Fix "if" conditions in each job, feels redundant.
 #   There is alot of replication of steps here since Github actions seems limited.
-#   Consider CircleCI.
-#   Cache Poetry bin so it can be reused between jobs instead of installing.
-#----------------------------------------------
 name: edbook
 on:
   push:
