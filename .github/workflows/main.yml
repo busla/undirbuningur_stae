@@ -167,7 +167,7 @@ jobs:
           name: artifacts
           path: ${{steps.zip_build.outputs.artifact}}
   tag-and-release:
-    needs: [setup, build-greining-1, build-greining-1]
+    needs: [setup, build-undirbuningur-stae, build-greining-1]
     name: Tag and release
     runs-on: ubuntu-20.04
     steps:
