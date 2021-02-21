@@ -32,7 +32,6 @@ jobs:
         shell: bash
         run: |
           echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/})"
-          ls -al artifacts
       #----------------------------------------------
       # check-out repo and set-up python
       #----------------------------------------------
