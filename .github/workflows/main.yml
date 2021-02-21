@@ -21,7 +21,8 @@ jobs:
     name: Setup and build
     runs-on: ubuntu-20.04
     outputs:
-      artifact: ${{ steps.zip_build.outputs.artifact }}
+      foundation-artifact: ${{ steps.zip_build.outputs.foundation-artifact }}
+      analysis-1-artifact: ${{ steps.zip_build.outputs.analysis-1-artifact }}
       branch_name: ${{ steps.extract_branch.outputs.branch_name }}
     steps:
       #----------------------------------------------
@@ -63,13 +64,19 @@ jobs:
         run: |
           ls -al .
           source .venv/bin/activate
-          poetry run hicli build -b dirhtml
+          sphinx-build -c projects/analysis_1/ projects/analysis_1/ analysis_1_build
+          sphinx-build -c projects/foundation/ projects/foundation/ foundation_build
       - name: zip-build
         id: zip_build
+        env:
+          FOUNDATION-HASH: build-foundation-${{ runner.os }}-${{ hashFiles('projects/foundation/') }}
+          ANALYSIS-1-HASH: build-foundation-${{ runner.os }}-${{ hashFiles('projects/analysis_1/') }}
         # Use zip instead of tar to support non-tech users that want to download the artifact
         run: |
-          cd _build && zip -r build-${{ runner.os }}-${{ hashFiles('docs') }} *
-          echo "::set-output name=artifact::$(echo build-${{ runner.os }}-${{ hashFiles('docs') }}.zip)"
+          cd foundation_build && zip -r $FOUNDATION-HASH * && cd ..
+          echo "::set-output name=foundation-artifact::$(echo $FOUNDATION-HASH.zip)"
+          cd analysis_1_build && zip -r $ANALYSIS-1-HASH * && cd ..
+          echo "::set-output name=analysis-1-artifact::$(echo $ANALYSIS-1-HASH.zip)"
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
       #----------------------------------------------
@@ -84,7 +91,10 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{steps.zip_build.outputs.artifact}}
-          path: _build/${{steps.zip_build.outputs.artifact}}
+          path: |
+            foundation-artifact
+            analysis-1-artifact
+
   tag-and-release:
     needs: setup
     name: Tag and release
@@ -171,13 +181,15 @@ jobs:
       #----------------------------------------------
       - name: Unzip build
         run: |
-          unzip ${{needs.setup.outputs.artifact}}
-          rm ${{needs.setup.outputs.artifact}}
+          unzip ${{needs.setup.outputs.foundation-artifact}} -d foundation-artifact
+          unzip ${{needs.setup.outputs.analysis-1-artifact}} -d analysis-1-artifact
+          rm ${{needs.setup.outputs.analysis-1-artifact}}
+          rm ${{needs.setup.outputs.foundation-artifact}}
       #----------------------------------------------
       # Delete dir on remote server, upload build tar and extract on remote server.
       #----------------------------------------------
-      - name: Cleanup and deploy feature
-        id: cleanup_deploy_feature
+      - name: Deploy foundation docs
+        id: deploy_foundation_docs
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -185,8 +197,19 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: ./
+          source: foundation-artifact
           target: ".public_html/staging/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}"
+      - name: Deploy analysis-1 docs
+        id: deploy_analysis_1_docs
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.HI_USERNAME }}
+          password: ${{ secrets.HI_PASSWORD }}
+          port: 22
+          rm: true
+          source: analysis-1-artifact
+          target: ".public_html/staging/greining-1/${{ needs.setup.outputs.branch_name }}"
   deploy-production-branch:
     if: needs.setup.outputs.branch_name == 'master'
     needs: [setup, tag-and-release]
