@@ -75,7 +75,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Check for changes
         run: |
-          ! git diff --quiet projects/foundation
+          ! git diff --quiet projects/foundation/
       - name: Set up python
         uses: actions/setup-python@v2
         if: ${{ success() }}
@@ -134,7 +134,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Check for changes
         run: |
-          ! git diff --quiet projects/analysis_1
+          ! git diff --quiet projects/analysis_1/
       - name: Set up python
         uses: actions/setup-python@v2
         if: ${{ success() }}
