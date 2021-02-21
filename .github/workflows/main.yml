@@ -73,8 +73,12 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
+      - name: Check for changes
+        run: |
+          ! git diff projects/foundation --quiet
       - name: Set up python
         uses: actions/setup-python@v2
+        if: ${{ success() }}
         with:
           python-version: 3.9
       #----------------------------------------------
@@ -83,6 +87,7 @@ jobs:
       - name: Load cached venv
         id: cached-poetry-dependencies
         uses: actions/cache@v2
+        if: ${{ success() }}
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
@@ -91,12 +96,14 @@ jobs:
       #----------------------------------------------
       - name: Build undirbuningur-stae
         id: build_undirbuningur_stae
+        if: ${{ success() }}
         run: |
           source .venv/bin/activate
           sphinx-build -c ${{ github.workspace }}/projects/foundation/ ${{ github.workspace }}/projects/foundation/ ${{ github.workspace }}/artifacts/foundation_build
           ls -al ${{ github.workspace }}/artifacts
       - name: zip-build
         id: zip_build
+        if: ${{ success() }}
         # Use zip instead of tar to support non-tech users that want to download the artifact
         run: |
           echo ${{ github.workspace }}
@@ -112,6 +119,7 @@ jobs:
       #----------------------------------------------
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
+        if: ${{ success() }}
         with:
           name: artifacts
           path: ${{steps.zip_build.outputs.artifact}}
@@ -124,8 +132,12 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
+      - name: Check for changes
+        run: |
+          ! git diff projects/analysis_1 --quiet
       - name: Set up python
         uses: actions/setup-python@v2
+        if: ${{ success() }}
         with:
           python-version: 3.9
       #----------------------------------------------
@@ -133,6 +145,7 @@ jobs:
       #----------------------------------------------
       - name: Load cached venv
         id: cached-poetry-dependencies
+        if: ${{ success() }}
         uses: actions/cache@v2
         with:
           path: .venv
@@ -142,12 +155,14 @@ jobs:
       #----------------------------------------------
       - name: Build greining-1
         id: build_greining_1
+        if: ${{ success() }}
         run: |
           source .venv/bin/activate
           sphinx-build -c ${{ github.workspace }}/projects/analysis_1/ ${{ github.workspace }}/projects/analysis_1/ ${{ github.workspace }}/artifacts/analysis_1_build
           ls -al ${{ github.workspace }}/artifacts
       - name: zip-build
         id: zip_build
+        if: ${{ success() }}
         # Use zip instead of tar to support non-tech users that want to download the artifact
         run: |
           echo ${{ github.workspace }}
@@ -162,6 +177,7 @@ jobs:
       # Upload build artifact
       #----------------------------------------------
       - name: Upload build artifact
+        if: ${{ success() }}
         uses: actions/upload-artifact@v2
         with:
           name: artifacts
@@ -224,7 +240,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_prerelease.outputs.upload_url }}
-          asset_path: "*.zip"
+          asset_path: artifact
           asset_name: artifact
           asset_content_type: application/zip
       - name: Upload release asset
