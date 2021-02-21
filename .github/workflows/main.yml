@@ -39,6 +39,7 @@ jobs:
       - name: Install Poetry
         uses: snok/install-poetry@v1.1.1
         with:
+          version: "1.1.4"
           virtualenvs-create: true
           virtualenvs-in-project: true
       #----------------------------------------------
@@ -202,7 +203,7 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          strip_components: 2
+          strip_components: 1
           source: foundation_build/*
           target: ".public_html/staging/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}"
       - name: Deploy analysis-1 docs
@@ -214,7 +215,7 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          strip_components: 2
+          strip_components: 1
           source: analysis_1_build/*
           target: ".public_html/staging/greining-1/${{ needs.setup.outputs.branch_name }}"
   deploy-production-branch:
