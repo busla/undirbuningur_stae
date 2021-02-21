@@ -185,6 +185,7 @@ jobs:
       # Unzip to comply with scp-action
       #----------------------------------------------
       - name: Unzip build
+        # greining-1/monorepo-demo/artifacts/analysis_1_build/
         run: |
           unzip ${{needs.setup.outputs.artifact}}
           rm ${{needs.setup.outputs.artifact}}
@@ -200,7 +201,7 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: artifacts/foundation_build
+          source: artifacts/foundation_build/*
           target: ".public_html/staging/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}"
       - name: Deploy analysis-1 docs
         id: deploy_analysis_1_docs
@@ -211,7 +212,7 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: artifacts/analysis_1_build
+          source: artifacts/analysis_1_build/*
           target: ".public_html/staging/greining-1/${{ needs.setup.outputs.branch_name }}"
   deploy-production-branch:
     if: needs.setup.outputs.branch_name == 'master'
@@ -231,10 +232,10 @@ jobs:
       #----------------------------------------------
       - name: Unzip build
         run: |
-          unzip artifacts/foundation/* && rm artifacts/foundation/*.zip
-          unzip artifacts/analysis_1/* && rm artifacts/analysis_1/*.zip
-      - name: Cleanup and deploy production
-        id: cleanup_deploy_production
+          unzip ${{needs.setup.outputs.artifact}}
+          rm ${{needs.setup.outputs.artifact}}
+      - name: Deploy foundation to prod
+        id: deploy_foundation_prod
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -244,3 +245,14 @@ jobs:
           rm: true
           source: artifacts/foundation
           target: ".public_html/production/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}"
+      - name: Deploy analysis-1 to prod
+        id: deploy_analysis_1_prod
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.HI_USERNAME }}
+          password: ${{ secrets.HI_PASSWORD }}
+          port: 22
+          rm: true
+          source: artifacts/analysis_1_build
+          target: ".public_html/staging/greining-1/${{ needs.setup.outputs.branch_name }}"
