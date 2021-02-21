@@ -66,6 +66,7 @@ jobs:
           source .venv/bin/activate
           sphinx-build -c projects/foundation/ projects/foundation/ foundation_build
           sphinx-build -c projects/analysis_1/ projects/analysis_1/ analysis_1_build
+          ls -alR .
       - name: zip-build
         id: zip_build
         # Use zip instead of tar to support non-tech users that want to download the artifact
@@ -78,7 +79,7 @@ jobs:
           export ANALYSIS_1_HASH=${{ hashFiles('projects/analysis_1/') }}
           echo ${FOUNDATION_HASH}
           cd ${{ github.workspace }}/foundation_build && zip -r "${BUILD_PREFIX}-${FOUNDATION_HASH}" * && mv "${BUILD_PREFIX}-${FOUNDATION_HASH}".zip ${{ github.workspace }}/artifacts/foundation
-          cd ${{ github.workspace }}/analysis_1 && zip -r "${BUILD_PREFIX}-${ANALYSIS_1_HASH}" * && mv "${BUILD_PREFIX}-${ANALYSIS_1_HASH}".zip ${{ github.workspace }}/artifacts/analysis_1 && cd ..
+          cd ${{ github.workspace }}/analysis_1 && zip -r "${BUILD_PREFIX}-${ANALYSIS_1_HASH}" * && mv "${BUILD_PREFIX}-${ANALYSIS_1_HASH}".zip ${{ github.workspace }}/artifacts/analysis_1
           ls -alR ${{ github.workspace }}/artifacts
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
