@@ -25,6 +25,15 @@ jobs:
       branch_name: ${{ steps.extract_branch.outputs.branch_name }}
     steps:
       #----------------------------------------------
+      # Store current branch name as output for reuse as dir name on remote host
+      #----------------------------------------------
+      - name: Extract branch name
+        id: extract_branch
+        shell: bash
+        run: |
+          echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/})"
+          ls -al artifacts
+      #----------------------------------------------
       # check-out repo and set-up python
       #----------------------------------------------
       - name: Check out repository
@@ -73,6 +82,13 @@ jobs:
           ls -alR projects
           source .venv/bin/activate
           sphinx-build -c ${{ github.workspace }}/projects/analysis_1/ ${{ github.workspace }}/projects/analysis_1/ ${{ github.workspace }}/artifacts/analysis_1_build
+          curl https://notendur.hi.is/jlg2/staging/greining-1/${{ steps.extract_branch.outputs.branch_name }}/.buildinfo -o .prodbuild
+          if cmp --silent -- .prodbuild projects/analysis_1/.buildinfo; then
+            echo "no changes, skipping deploy"
+            exit 78
+          else
+            echo "changes found, lets deploy"
+          fi
           ls -al ${{ github.workspace }}/artifacts
       - name: zip-build
         id: zip_build
@@ -86,15 +102,6 @@ jobs:
           zip -r "${BUILD_PREFIX}-${BUILD_HASH}" artifacts/*
           ls -al ${{ github.workspace }}
           echo "::set-output name=artifact::$(echo ${BUILD_PREFIX}-${BUILD_HASH}.zip)"
-      #----------------------------------------------
-      # Store current branch name as output for reuse as dir name on remote host
-      #----------------------------------------------
-      - name: Extract branch name
-        id: extract_branch
-        shell: bash
-        run: |
-          echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/})"
-          ls -al artifacts
       #----------------------------------------------
       # Upload build artifact
       #----------------------------------------------
