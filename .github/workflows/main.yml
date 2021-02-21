@@ -73,9 +73,10 @@ jobs:
           ANALYSIS-1-HASH: build-foundation-${{ runner.os }}-${{ hashFiles('projects/analysis_1/') }}
         # Use zip instead of tar to support non-tech users that want to download the artifact
         run: |
-          cd foundation_build && zip -r $FOUNDATION-HASH * && cd ..
+
+          cd foundation_build && zip -r build-foundation-${{ runner.os }}-${{ hashFiles('projects/foundation/') }} * && cd ..
           echo "::set-output name=foundation-artifact::$(echo $FOUNDATION-HASH.zip)"
-          cd analysis_1_build && zip -r $ANALYSIS-1-HASH * && cd ..
+          cd analysis_1_build && zip -r build-foundation-${{ runner.os }}-${{ hashFiles('projects/analysis_1/') }} * && cd ..
           echo "::set-output name=analysis-1-artifact::$(echo $ANALYSIS-1-HASH.zip)"
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
