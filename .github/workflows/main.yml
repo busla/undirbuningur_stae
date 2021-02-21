@@ -180,7 +180,7 @@ jobs:
       - name: Get build artifact
         uses: actions/download-artifact@v2
         with:
-          name: artifact
+          name: artifacts
       #----------------------------------------------
       # Unzip to comply with scp-action
       #----------------------------------------------
