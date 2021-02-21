@@ -60,11 +60,18 @@ jobs:
       #----------------------------------------------
       # Build
       #----------------------------------------------
-      - name: build
+      - name: Build undirbuningur-stae
+        id: build_undirbuningur_stae
         run: |
           ls -alR projects
           source .venv/bin/activate
           sphinx-build -c ${{ github.workspace }}/projects/foundation/ ${{ github.workspace }}/projects/foundation/ ${{ github.workspace }}/artifacts/foundation_build
+          ls -al ${{ github.workspace }}/artifacts
+      - name: Build greining-1
+        id: build_undirbuningur_stae
+        run: |
+          ls -alR projects
+          source .venv/bin/activate
           sphinx-build -c ${{ github.workspace }}/projects/analysis_1/ ${{ github.workspace }}/projects/analysis_1/ ${{ github.workspace }}/artifacts/analysis_1_build
           ls -al ${{ github.workspace }}/artifacts
       - name: zip-build
