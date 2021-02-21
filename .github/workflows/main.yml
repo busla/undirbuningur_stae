@@ -71,16 +71,17 @@ jobs:
         # Use zip instead of tar to support non-tech users that want to download the artifact
         run: |
           cd foundation_build && zip -r build-foundation-${{ runner.os }}-${{ hashFiles('projects/foundation/') }} * && cd ..
-          echo "::set-output name=foundation-artifact::$(echo build-foundation-${{ runner.os }}-${{ hashFiles('projects/foundation/') }}.zip)"
           cd analysis_1_build && zip -r build-foundation-${{ runner.os }}-${{ hashFiles('projects/analysis_1/') }} * && cd ..
-          echo "::set-output name=analysis-1-artifact::$(echo build-foundation-${{ runner.os }}-${{ hashFiles('projects/analysis_1/') }}.zip)"
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
       #----------------------------------------------
       - name: Extract branch name
         id: extract_branch
         shell: bash
-        run: echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/})"
+        run: |
+          echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/})"
+          ls -al projects/foundation/
+          ls -al projects/analysis_1/
       #----------------------------------------------
       # Upload build artifact
       #----------------------------------------------
@@ -89,8 +90,8 @@ jobs:
         with:
           name: ${{steps.zip_build.outputs.artifact}}
           path: |
-            foundation-artifact
-            analysis-1-artifact
+            projects/foundation/*.zip
+            projects/analysis_1/*.zip
 
   tag-and-release:
     needs: setup
