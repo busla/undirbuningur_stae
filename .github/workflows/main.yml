@@ -70,13 +70,14 @@ jobs:
         id: zip_build
         # Use zip instead of tar to support non-tech users that want to download the artifact
         run: |
-          mkdir -p artifacts/foundation artifacts/analysis_1
+          echo ${{ github.workspace }}
+          mkdir -p ${{ github.workspace }}/artifacts/foundation ${{ github.workspace }}/artifacts/analysis_1
           export BUILD_PREFIX=build-foundation-${{ runner.os }}
           export FOUNDATION_HASH=${{ hashFiles('projects/foundation/') }}
           export ANALYSIS_1_HASH=${{ hashFiles('projects/analysis_1/') }}
           echo ${FOUNDATION_HASH}
-          cd foundation_build && zip -r "${BUILD_PREFIX}-${FOUNDATION_HASH}" * && mv "${BUILD_PREFIX}-${FOUNDATION_HASH}".zip ../artifacts/foundation && cd ..
-          cd analysis_1 && zip -r "${BUILD_PREFIX}-${ANALYSIS_1_HASH}" * && mv "${BUILD_PREFIX}-${ANALYSIS_1_HASH}".zip ../artifacts/analysis_1 && cd ..
+          cd ${{ github.workspace }}/foundation_build && zip -r "${BUILD_PREFIX}-${FOUNDATION_HASH}" * && mv "${BUILD_PREFIX}-${FOUNDATION_HASH}".zip ../artifacts/foundation
+          cd ${{ github.workspace }}/analysis_1 && zip -r "${BUILD_PREFIX}-${ANALYSIS_1_HASH}" * && mv "${BUILD_PREFIX}-${ANALYSIS_1_HASH}".zip ../artifacts/analysis_1 && cd ..
           ls -alR artifacts
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
@@ -117,6 +118,10 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: artifacts
+      - name: debug
+        run: |
+          ls -alR .
+
       #----------------------------------------------
       # zip build artifact
       #----------------------------------------------
