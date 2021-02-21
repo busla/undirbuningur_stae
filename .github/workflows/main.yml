@@ -167,7 +167,7 @@ jobs:
           name: artifacts
           path: ${{steps.zip_build.outputs.artifact}}
   tag-and-release:
-    needs: setup
+    needs: [setup, build-greining-1, build-greining-1]
     name: Tag and release
     runs-on: ubuntu-20.04
     steps:
@@ -224,7 +224,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_prerelease.outputs.upload_url }}
-          asset_path: artifact
+          asset_path: "*.zip"
           asset_name: artifact
           asset_content_type: application/zip
       - name: Upload release asset
