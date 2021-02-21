@@ -78,6 +78,7 @@ jobs:
           export FOUNDATION_HASH=${{ hashFiles('projects/foundation/') }}
           export ANALYSIS_1_HASH=${{ hashFiles('projects/analysis_1/') }}
           echo ${FOUNDATION_HASH}
+          echo ${ANALYSIS_1_HASH}
           cd ${{ github.workspace }}/foundation_build && zip -r "${BUILD_PREFIX}-${FOUNDATION_HASH}" * && mv "${BUILD_PREFIX}-${FOUNDATION_HASH}".zip ${{ github.workspace }}/artifacts/foundation
           cd ${{ github.workspace }}/analysis_1 && zip -r "${BUILD_PREFIX}-${ANALYSIS_1_HASH}" * && mv "${BUILD_PREFIX}-${ANALYSIS_1_HASH}".zip ${{ github.workspace }}/artifacts/analysis_1
           ls -alR ${{ github.workspace }}/artifacts
