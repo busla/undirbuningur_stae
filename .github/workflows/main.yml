@@ -73,12 +73,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
-      - name: Check for changes
-        run: |
-          ! git diff --quiet projects/foundation/
       - name: Set up python
         uses: actions/setup-python@v2
-        if: ${{ success() }}
         with:
           python-version: 3.9
       #----------------------------------------------
@@ -87,7 +83,6 @@ jobs:
       - name: Load cached venv
         id: cached-poetry-dependencies
         uses: actions/cache@v2
-        if: ${{ success() }}
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
@@ -96,11 +91,21 @@ jobs:
       #----------------------------------------------
       - name: Build undirbuningur-stae
         id: build_undirbuningur_stae
-        if: ${{ success() }}
         run: |
           source .venv/bin/activate
-          sphinx-build -c ${{ github.workspace }}/projects/foundation/ ${{ github.workspace }}/projects/foundation/ ${{ github.workspace }}/artifacts/foundation_build
-          ls -al ${{ github.workspace }}/artifacts
+          sphinx-build -c projects/foundation/ projects/foundation/ artifacts/foundation_build
+          ls -al artifacts
+      - name: Check for changes
+        run: |
+          curl https://notendur.hi.is/jlg2/staging/greining-1/${{ needs.setup.outputs.branch_name }}/.buildinfo -o .prodbuild
+          diff .prodinfo artifacts/foundation_build/.buildinfo
+          if diff .prodinfo artifacts/foundation_build/.buildinfo >/dev/null 2>&1
+          then
+              echo "Files are the same"
+              exit 78
+          else
+              echo "Files are different"
+          fi
       - name: zip-build
         id: zip_build
         if: ${{ success() }}
@@ -132,12 +137,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
-      - name: Check for changes
-        run: |
-          ! git diff --quiet projects/analysis_1/
       - name: Set up python
         uses: actions/setup-python@v2
-        if: ${{ success() }}
         with:
           python-version: 3.9
       #----------------------------------------------
@@ -145,7 +146,6 @@ jobs:
       #----------------------------------------------
       - name: Load cached venv
         id: cached-poetry-dependencies
-        if: ${{ success() }}
         uses: actions/cache@v2
         with:
           path: .venv
@@ -155,11 +155,21 @@ jobs:
       #----------------------------------------------
       - name: Build greining-1
         id: build_greining_1
-        if: ${{ success() }}
         run: |
           source .venv/bin/activate
           sphinx-build -c ${{ github.workspace }}/projects/analysis_1/ ${{ github.workspace }}/projects/analysis_1/ ${{ github.workspace }}/artifacts/analysis_1_build
           ls -al ${{ github.workspace }}/artifacts
+      - name: Check for changes
+        run: |
+          curl https://notendur.hi.is/jlg2/staging/greining-1/${{ needs.setup.outputs.branch_name }}/.buildinfo -o .prodbuild
+          diff .prodinfo artifacts/analysis_1_build/.buildinfo
+          if diff .prodinfo artifacts/analysis_1_build/.buildinfo >/dev/null 2>&1
+          then
+              echo "Files are the same"
+              exit 78
+          else
+              echo "Files are different"
+          fi
       - name: zip-build
         id: zip_build
         if: ${{ success() }}
