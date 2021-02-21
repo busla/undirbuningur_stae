@@ -66,8 +66,7 @@ jobs:
           source .venv/bin/activate
           sphinx-build -c ${{ github.workspace }}/projects/foundation/ ${{ github.workspace }}/projects/foundation/ ${{ github.workspace }}/artifacts/foundation_build
           sphinx-build -c ${{ github.workspace }}/projects/analysis_1/ ${{ github.workspace }}/projects/analysis_1/ ${{ github.workspace }}/artifacts/analysis_1_build
-          ls -alR foundation_build
-          ls -alR analysis_1_build
+          ls -al ${{ github.workspace }}/artifacts
       - name: zip-build
         id: zip_build
         # Use zip instead of tar to support non-tech users that want to download the artifact
