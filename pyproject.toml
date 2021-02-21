@@ -4,7 +4,8 @@ version = "0.1.0"
 description = ""
 authors = ["Benedikt Magnússon og fleiri"]
 packages = [
-    { include = "docs" },
+    { include = "extensions" },
+    { include = "projects" },
     { include = "hicli" }
 ]
 
