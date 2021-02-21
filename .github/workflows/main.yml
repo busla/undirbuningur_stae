@@ -64,8 +64,8 @@ jobs:
         run: |
           ls -alR projects
           source .venv/bin/activate
-          sphinx-build -c ${{ github.workspace }}/projects/foundation/ ${{ github.workspace }}/projects/foundation/ ${{ github.workspace }}/foundation_build
-          sphinx-build -c ${{ github.workspace }}/projects/analysis_1/ ${{ github.workspace }}/projects/analysis_1/ ${{ github.workspace }}/analysis_1_build
+          sphinx-build -c ${{ github.workspace }}/projects/foundation/ ${{ github.workspace }}/projects/foundation/ ${{ github.workspace }}/artifacts/foundation_build
+          sphinx-build -c ${{ github.workspace }}/projects/analysis_1/ ${{ github.workspace }}/projects/analysis_1/ ${{ github.workspace }}/artifacts/analysis_1_build
           ls -alR foundation_build
           ls -alR analysis_1_build
       - name: zip-build
@@ -73,16 +73,12 @@ jobs:
         # Use zip instead of tar to support non-tech users that want to download the artifact
         run: |
           echo ${{ github.workspace }}
-          mkdir -p ${{ github.workspace }}/artifacts/foundation ${{ github.workspace }}/artifacts/analysis_1
           ls ${{ github.workspace }}/artifacts
           export BUILD_PREFIX=build-${{ runner.os }}
-          export FOUNDATION_HASH=${{ hashFiles('projects/foundation/') }}
-          export ANALYSIS_1_HASH=${{ hashFiles('projects/analysis_1/') }}
-          echo ${FOUNDATION_HASH}
-          echo ${ANALYSIS_1_HASH}
-          cd ${{ github.workspace }}/foundation_build && zip -r "${BUILD_PREFIX}-foundation-${FOUNDATION_HASH}" * && mv "${BUILD_PREFIX}-${FOUNDATION_HASH}".zip ${{ github.workspace }}/artifacts/foundation
-          cd ${{ github.workspace }}/analysis_1_build && zip -r "${BUILD_PREFIX}-analysis-1-${ANALYSIS_1_HASH}" * && mv "${BUILD_PREFIX}-${ANALYSIS_1_HASH}".zip ${{ github.workspace }}/artifacts/analysis_1
-          ls -alR ${{ github.workspace }}/artifacts
+          export BUILD_HASH=${{ hashFiles('artifacts') }}
+          echo ${BUILD_HASH}
+          zip -r "${BUILD_PREFIX}-${BUILD_HASH}" artifacts/*
+          ls -al ${{ github.workspace }}
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
       #----------------------------------------------
@@ -99,7 +95,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: artifacts
-          path: artifacts
+          path: "*.zip"
 
   tag-and-release:
     needs: setup
@@ -124,7 +120,7 @@ jobs:
           name: artifacts
       - name: debug
         run: |
-          ls -alR .
+          ls -al .
 
       #----------------------------------------------
       # zip build artifact
@@ -159,7 +155,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_prerelease.outputs.upload_url }}
-          asset_path: artifacts
+          asset_path: artifacts/*
           asset_name: build-${{ steps.bump_version.outputs.tag }}.zip
           asset_content_type: application/zip
       - name: Upload release asset
@@ -170,7 +166,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: artifacts
+          asset_path: "*.zip"
           asset_name: build-${{ steps.bump_version.outputs.tag }}.zip
           asset_content_type: application/zip
   deploy-feature-branch:
