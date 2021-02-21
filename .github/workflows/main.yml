@@ -64,8 +64,8 @@ jobs:
         run: |
           ls -alR projects
           source .venv/bin/activate
-          sphinx-build -c projects/foundation/ projects/foundation/ foundation_build
-          sphinx-build -c projects/analysis_1/ projects/analysis_1/ analysis_1_build
+          sphinx-build -c ${{ github.workspace }}/projects/foundation/ ${{ github.workspace }}/projects/foundation/ ${{ github.workspace }}/foundation_build
+          sphinx-build -c ${{ github.workspace }}/projects/analysis_1/ ${{ github.workspace }}/projects/analysis_1/ ${{ github.workspace }}/analysis_1_build
           ls -alR foundation_build
           ls -alR analysis_1_build
       - name: zip-build
@@ -81,7 +81,7 @@ jobs:
           echo ${FOUNDATION_HASH}
           echo ${ANALYSIS_1_HASH}
           cd ${{ github.workspace }}/foundation_build && zip -r "${BUILD_PREFIX}-${FOUNDATION_HASH}" * && mv "${BUILD_PREFIX}-${FOUNDATION_HASH}".zip ${{ github.workspace }}/artifacts/foundation
-          cd ${{ github.workspace }}/analysis_1 && zip -r "${BUILD_PREFIX}-${ANALYSIS_1_HASH}" * && mv "${BUILD_PREFIX}-${ANALYSIS_1_HASH}".zip ${{ github.workspace }}/artifacts/analysis_1
+          cd ${{ github.workspace }}/analysis_1_build && zip -r "${BUILD_PREFIX}-${ANALYSIS_1_HASH}" * && mv "${BUILD_PREFIX}-${ANALYSIS_1_HASH}".zip ${{ github.workspace }}/artifacts/analysis_1
           ls -alR ${{ github.workspace }}/artifacts
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
