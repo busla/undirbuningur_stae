@@ -21,8 +21,7 @@ jobs:
     name: Setup and build
     runs-on: ubuntu-20.04
     outputs:
-      foundation-artifact: ${{ steps.zip_build.outputs.foundation-artifact }}
-      analysis-1-artifact: ${{ steps.zip_build.outputs.analysis-1-artifact }}
+      artifact: ${{ steps.zip_build.outputs.artifact }}
       branch_name: ${{ steps.extract_branch.outputs.branch_name }}
     steps:
       #----------------------------------------------
@@ -78,6 +77,7 @@ jobs:
           echo ${BUILD_HASH}
           zip -r "${BUILD_PREFIX}-${BUILD_HASH}" artifacts/*
           ls -al ${{ github.workspace }}
+          echo "::set-output name=artifact::$(echo ${BUILD_PREFIX}-${BUILD_HASH}.zip)"
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
       #----------------------------------------------
@@ -94,7 +94,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: artifacts
-          path: "*.zip"
+          path: ${{steps.zip_build.outputs.artifact}}
 
   tag-and-release:
     needs: setup
@@ -154,8 +154,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_prerelease.outputs.upload_url }}
-          asset_path: artifacts/*
-          asset_name: build-${{ steps.bump_version.outputs.tag }}.zip
+          asset_path: ${{needs.setup.outputs.artifact}}
+          asset_name: ${{needs.setup.outputs.artifact}}
           asset_content_type: application/zip
       - name: Upload release asset
         if: needs.setup.outputs.branch_name == 'master'
@@ -165,8 +165,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: "*.zip"
-          asset_name: build-${{ steps.bump_version.outputs.tag }}.zip
+          asset_path: ${{needs.setup.outputs.artifact}}
+          asset_name: ${{needs.setup.outputs.artifact}}
           asset_content_type: application/zip
   deploy-feature-branch:
     needs: [setup, tag-and-release]
@@ -180,14 +180,15 @@ jobs:
       - name: Get build artifact
         uses: actions/download-artifact@v2
         with:
-          name: artifacts
+          name: artifact
       #----------------------------------------------
       # Unzip to comply with scp-action
       #----------------------------------------------
       - name: Unzip build
         run: |
-          unzip artifacts/foundation/* && rm artifacts/foundation/*.zip
-          unzip artifacts/analysis_1/* && rm artifacts/analysis_1/*.zip
+          unzip ${{needs.setup.outputs.artifact}}
+          ls foundation_build
+          rm ${{needs.setup.outputs.artifact}}
       #----------------------------------------------
       # Delete dir on remote server, upload build tar and extract on remote server.
       #----------------------------------------------
@@ -200,7 +201,7 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: artifacts/foundation
+          source: foundation_build
           target: ".public_html/staging/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}"
       - name: Deploy analysis-1 docs
         id: deploy_analysis_1_docs
@@ -211,7 +212,7 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: artifacts/analysis_1
+          source: analysis_1_build
           target: ".public_html/staging/greining-1/${{ needs.setup.outputs.branch_name }}"
   deploy-production-branch:
     if: needs.setup.outputs.branch_name == 'master'
