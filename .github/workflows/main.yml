@@ -64,14 +64,18 @@ jobs:
         run: |
           ls -al .
           source .venv/bin/activate
-          sphinx-build -c projects/analysis_1/ projects/analysis_1/ analysis_1_build
           sphinx-build -c projects/foundation/ projects/foundation/ foundation_build
+          sphinx-build -c projects/analysis_1/ projects/analysis_1/ analysis_1_build
       - name: zip-build
         id: zip_build
         # Use zip instead of tar to support non-tech users that want to download the artifact
         run: |
-          cd foundation_build && zip -r build-foundation-${{ runner.os }}-${{ hashFiles('projects/foundation/') }} * && cd ..
-          cd analysis_1_build && zip -r build-foundation-${{ runner.os }}-${{ hashFiles('projects/analysis_1/') }} * && cd ..
+          mkdir -p artifacts/foundation artifacts/analysis_1
+          export BUILD_PREFIX=build-foundation-${{ runner.os }}
+          export FOUNDATION_HASH=${{ hashFiles('projects/foundation/') }}
+          export ANALYSIS_1_HASH=${{ hashFiles('projects/analysis_1/') }}
+          cd foundation_build && zip -r "${BUILD_PREFIX}-${FOUNDATION_HASH}" * -d ../artifacts/foundation && cd ..
+          cd analysis_1 && zip -r "${BUILD_PREFIX}-${ANALYSIS_1_HASH}" * -d ../artifacts/analysis_1 && cd ..
       #----------------------------------------------
       # Store current branch name as output for reuse as dir name on remote host
       #----------------------------------------------
@@ -80,18 +84,15 @@ jobs:
         shell: bash
         run: |
           echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/})"
-          ls -al projects/foundation/
-          ls -al projects/analysis_1/
+          ls -al artifacts
       #----------------------------------------------
       # Upload build artifact
       #----------------------------------------------
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{steps.zip_build.outputs.artifact}}
-          path: |
-            projects/foundation/*.zip
-            projects/analysis_1/*.zip
+          name: artifacts
+          path: artifacts
 
   tag-and-release:
     needs: setup
@@ -113,7 +114,7 @@ jobs:
       - name: Get build artifact
         uses: actions/download-artifact@v2
         with:
-          name: ${{needs.setup.outputs.artifact}}
+          name: artifacts
       #----------------------------------------------
       # zip build artifact
       #----------------------------------------------
@@ -147,7 +148,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_prerelease.outputs.upload_url }}
-          asset_path: ${{ needs.setup.outputs.artifact }}
+          asset_path: artifacts
           asset_name: build-${{ steps.bump_version.outputs.tag }}.zip
           asset_content_type: application/zip
       - name: Upload release asset
@@ -158,7 +159,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{needs.setup.outputs.artifact}}
+          asset_path: artifacts
           asset_name: build-${{ steps.bump_version.outputs.tag }}.zip
           asset_content_type: application/zip
   deploy-feature-branch:
@@ -173,16 +174,14 @@ jobs:
       - name: Get build artifact
         uses: actions/download-artifact@v2
         with:
-          name: ${{needs.setup.outputs.artifact}}
+          name: artifacts
       #----------------------------------------------
       # Unzip to comply with scp-action
       #----------------------------------------------
       - name: Unzip build
         run: |
-          unzip ${{needs.setup.outputs.foundation-artifact}} -d foundation-artifact
-          unzip ${{needs.setup.outputs.analysis-1-artifact}} -d analysis-1-artifact
-          rm ${{needs.setup.outputs.analysis-1-artifact}}
-          rm ${{needs.setup.outputs.foundation-artifact}}
+          unzip artifacts/foundation/* && rm artifacts/foundation/*.zip
+          unzip artifacts/analysis_1/* && rm artifacts/analysis_1/*.zip
       #----------------------------------------------
       # Delete dir on remote server, upload build tar and extract on remote server.
       #----------------------------------------------
@@ -195,7 +194,7 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: foundation-artifact
+          source: artifacts/foundation
           target: ".public_html/staging/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}"
       - name: Deploy analysis-1 docs
         id: deploy_analysis_1_docs
@@ -206,7 +205,7 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: analysis-1-artifact
+          source: artifacts/analysis_1
           target: ".public_html/staging/greining-1/${{ needs.setup.outputs.branch_name }}"
   deploy-production-branch:
     if: needs.setup.outputs.branch_name == 'master'
@@ -220,14 +219,14 @@ jobs:
       - name: Get build artifact
         uses: actions/download-artifact@v2
         with:
-          name: ${{needs.setup.outputs.artifact}}
+          name: artifacts
       #----------------------------------------------
       # Unzip to comply with scp-action
       #----------------------------------------------
       - name: Unzip build
         run: |
-          unzip ${{needs.setup.outputs.artifact}}
-          rm ${{needs.setup.outputs.artifact}}
+          unzip artifacts/foundation/* && rm artifacts/foundation/*.zip
+          unzip artifacts/analysis_1/* && rm artifacts/analysis_1/*.zip
       - name: Cleanup and deploy production
         id: cleanup_deploy_production
         uses: appleboy/scp-action@master
@@ -237,5 +236,5 @@ jobs:
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          source: ./
+          source: artifacts/foundation
           target: ".public_html/production/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}"
