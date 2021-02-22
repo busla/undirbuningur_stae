@@ -210,7 +210,7 @@ jobs:
           name: artifacts
           path: ${{steps.zip_build.outputs.artifact}}
   deploy-feature-branch:
-    needs: [setup, build-greining-1, build-undirbuningur-stae]
+    needs: [setup, pre-build, build-greining-1, build-undirbuningur-stae]
     if: always()
     name: Deploy feature branch
     runs-on: ubuntu-20.04
