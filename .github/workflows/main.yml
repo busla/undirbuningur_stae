@@ -107,7 +107,7 @@ jobs:
           done
           ls -al artifacts
   build-undirbuningur-stae:
-    needs: setup
+    needs: [setup, pre-build]
     name: Build undirbuningur-stae
     runs-on: ubuntu-20.04
     outputs:
@@ -172,7 +172,7 @@ jobs:
           name: artifacts
           path: ${{steps.zip_build.outputs.artifact}}
   build-greining-1:
-    needs: setup
+    needs: [setup, pre-build]
     name: Build Greining-1
     runs-on: ubuntu-20.04
     outputs:
