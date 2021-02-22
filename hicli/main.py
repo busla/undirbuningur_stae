@@ -36,7 +36,7 @@ def cmd_build():
 @app.command("build")
 def cmd_build(
     source_dir: str = typer.Argument(
-        ROOT_DIR.joinpath("docs"),
+        ROOT_DIR,
         help="Source files relative dir",
     ),
     build_dir: str = typer.Argument(
