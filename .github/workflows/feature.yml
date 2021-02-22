@@ -94,7 +94,6 @@ jobs:
         run: |
           source .venv/bin/activate
           for dir in projects/*; do
-            git diff HEAD^ HEAD $dir
             if git diff HEAD^ HEAD --exit-code $dir >/dev/null 2>&1
             project_name=$(echo $dir | awk -F'/' '{print $2}')
             then
