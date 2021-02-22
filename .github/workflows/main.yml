@@ -102,17 +102,18 @@ jobs:
             if git diff HEAD^ HEAD --exit-code $dir >/dev/null 2>&1
             then
               echo "No changes found in build"
+              echo $dir
             else
                 echo "Changes found in build"
                 echo "::set-output name=$dir-is-modified::$(echo true)"
                 echo $dir
             fi
           done
-          ls -al artifacts
   build-undirbuningur-stae:
     needs: [setup, pre-build]
     name: Build undirbuningur-stae
     runs-on: ubuntu-20.04
+    if: needs.pre-build.outputs.foundation-is-modified == 'true'
     outputs:
       artifact: ${{ steps.zip_build.outputs.artifact }}
       is-modified: ${{ steps.is_modified.outputs.is-modified }}
@@ -176,6 +177,7 @@ jobs:
           path: ${{steps.zip_build.outputs.artifact}}
   build-greining-1:
     needs: [setup, pre-build]
+    if: needs.pre-build.outputs.analysis_1-is-modified == 'true'
     name: Build Greining-1
     runs-on: ubuntu-20.04
     outputs:
