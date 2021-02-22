@@ -93,21 +93,19 @@ jobs:
         run: |
           source .venv/bin/activate
           for dir in projects/*; do
-            git diff HEAD^ HEAD $dir
-            if git diff HEAD^ HEAD --exit-code $dir >/dev/null 2>&1
             project_name=$(echo $dir | awk -F'/' '{print $2}')
+            if git diff HEAD^ HEAD --exit-code $dir >/dev/null 2>&1
             then
               echo "No changes found in $project_name"
             else
-                echo "Changes found in $project_name"
-                echo "::set-output name=$project_name-is-modified::$(echo true)"
+              echo "Changes found in $project_name"
+              echo "::set-output name=$project_name-is-modified::$(echo true)"
             fi
           done
-  build-undirbuningur-stae:
+  build-projects:
     needs: [setup, pre-build]
-    name: Build undirbuningur-stae
+    name: Build projects
     runs-on: ubuntu-20.04
-    if: needs.pre-build.outputs.foundation-is-modified == 'true'
     outputs:
       artifact: ${{ steps.zip_build.outputs.artifact }}
       is-modified: ${{ steps.is_modified.outputs.is-modified }}
@@ -130,68 +128,14 @@ jobs:
       #----------------------------------------------
       # Build
       #----------------------------------------------
-      - name: Build undirbuningur-stae
+      - name: Build
         id: build_undirbuningur_stae
         run: |
           source .venv/bin/activate
           sphinx-build -c projects/foundation/ projects/foundation/ artifacts/foundation_build
+          sphinx-build -c projects/analysis_1/ projects/analysis_1/ artifacts/analysis_1
           ls -al artifacts
-      - name: zip-build
-        id: zip_build
-        if: steps.is_modified.outputs.is-modified == 'true'
-        # Use zip instead of tar to support non-tech users that want to download the artifact
-        run: |
-          echo ${{ github.workspace }}
-          ls ${{ github.workspace }}/artifacts
-          export BUILD_PREFIX=build-${{ runner.os }}
-          export BUILD_HASH=${{ hashFiles('artifacts') }}
-          echo ${BUILD_HASH}
-          zip -r "undirbuningur-stae-${BUILD_PREFIX}-${BUILD_HASH}" artifacts/*
-          ls -al ${{ github.workspace }}
-          echo "::set-output name=artifact::$(echo ${BUILD_PREFIX}-${BUILD_HASH}.zip)"
-      #----------------------------------------------
-      # Upload build artifact
-      #----------------------------------------------
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v2
-        if: steps.is_modified.outputs.is-modified == 'true'
-        with:
-          name: artifacts
-          path: ${{steps.zip_build.outputs.artifact}}
-  build-greining-1:
-    needs: [setup, pre-build]
-    if: needs.pre-build.outputs.analysis_1-is-modified == 'true'
-    name: Build Greining-1
-    runs-on: ubuntu-20.04
-    outputs:
-      artifact: ${{ steps.zip_build.outputs.artifact }}
-      is-modified: ${{ steps.is_modified.outputs.is-modified }}
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
-      - name: Set up python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-      #----------------------------------------------
-      # load cached venv if cache exists
-      #----------------------------------------------
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v2
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-      #----------------------------------------------
-      # Build
-      #----------------------------------------------
-      - name: Build greining-1
-        id: build_greining_1
-        run: |
-          source .venv/bin/activate
-          sphinx-build -c ${{ github.workspace }}/projects/analysis_1/ ${{ github.workspace }}/projects/analysis_1/ ${{ github.workspace }}/artifacts/analysis_1_build
-          ls -al ${{ github.workspace }}/artifacts
-      - name: zip-build
+      - name: Compress sphinx build
         id: zip_build
         # Use zip instead of tar to support non-tech users that want to download the artifact
         run: |
@@ -200,7 +144,7 @@ jobs:
           export BUILD_PREFIX=build-${{ runner.os }}
           export BUILD_HASH=${{ hashFiles('artifacts') }}
           echo ${BUILD_HASH}
-          zip -r "greining-1-${BUILD_PREFIX}-${BUILD_HASH}" artifacts/*
+          zip -r "${BUILD_PREFIX}-${BUILD_HASH}" artifacts/*
           ls -al ${{ github.workspace }}
           echo "::set-output name=artifact::$(echo ${BUILD_PREFIX}-${BUILD_HASH}.zip)"
       #----------------------------------------------
@@ -208,15 +152,13 @@ jobs:
       #----------------------------------------------
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
-        if: steps.is_modified.outputs.is-modified == 'true'
         with:
           name: artifacts
           path: ${{steps.zip_build.outputs.artifact}}
   tag-and-release:
-    needs: [setup, build-undirbuningur-stae, build-greining-1]
+    needs: [setup, pre-build, build-projects]
     name: Tag and release
     runs-on: ubuntu-20.04
-    if: needs.pre-build.outputs.analysis_1-is-modified == 'true' ||  needs.pre-build.outputs.foundation-is-modified == 'true'
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -278,62 +220,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: artifact
-          asset_name: artifact
+          asset_path: artifacts
+          asset_name: artifacts
           asset_content_type: application/zip
-  deploy-feature-branch:
-    needs: [setup, build-greining-1, build-undirbuningur-stae, tag-and-release]
-    if: needs.setup.outputs.branch_name != 'master' && (needs.build-undirbuningur-stae.outputs.is-modified == 'true' ||  needs.build-greining-1.outputs.is-modified == 'true')
-    name: Deploy feature branch
-    runs-on: ubuntu-20.04
-    steps:
-      #----------------------------------------------
-      # Get build artifact from setup job
-      #----------------------------------------------
-      - name: Get build artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: artifacts
-      #----------------------------------------------
-      # Unzip to comply with scp-action
-      #----------------------------------------------
-      - name: Unzip build
-        # greining-1/monorepo-demo/artifacts/analysis_1_build/
-        run: |
-          unzip artifact && mv ${{ github.workspace }}/artifacts/* ${{ github.workspace }}/
-          ls -al .
-          rm *.zip
-          ls -al .
-      #----------------------------------------------
-      # Delete dir on remote server, upload build tar and extract on remote server.
-      #----------------------------------------------
-      - name: Deploy foundation docs
-        id: deploy_foundation_docs
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.HI_USERNAME }}
-          password: ${{ secrets.HI_PASSWORD }}
-          port: 22
-          rm: true
-          strip_components: 1
-          source: foundation_build/*
-          target: ".public_html/staging/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}"
-      - name: Deploy analysis-1 docs
-        id: deploy_analysis_1_docs
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.HI_USERNAME }}
-          password: ${{ secrets.HI_PASSWORD }}
-          port: 22
-          rm: true
-          strip_components: 1
-          source: analysis_1_build/*
-          target: ".public_html/staging/greining-1/${{ needs.setup.outputs.branch_name }}"
   deploy-production-branch:
-    if: needs.setup.outputs.branch_name == 'master' && (needs.build-undirbuningur-stae.outputs.is-modified == 'true' ||  needs.build-greining-1.outputs.is-modified == 'true')
-    needs: [setup, tag-and-release]
+    if: needs.pre-build.outputs.analysis_1-is-modified == 'true' || needs.pre-build.outputs.foundation-is-modified == 'true'
+    needs: [setup, pre-build, build-projects, tag-and-release]
     name: Deploy production branch
     runs-on: ubuntu-20.04
     steps:
@@ -350,31 +242,33 @@ jobs:
       - name: Unzip build
         # greining-1/monorepo-demo/artifacts/analysis_1_build/
         run: |
+          unzip *.zip && mv ${{ github.workspace }}/artifacts/* ${{ github.workspace }}/
           ls -al .
-          unzip *.zip
           rm *.zip
           ls -al .
       - name: Deploy foundation to prod
         id: deploy_foundation_prod
         uses: appleboy/scp-action@master
+        if: needs.pre-build.outputs.foundation-is-modified == 'true'
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.HI_USERNAME }}
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          strip_components: 2
-          source: artifacts
-          target: ".public_html/production/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}"
+          strip_components: 1
+          source: foundation_build/*
+          target: ".public_html/production/undirbuningur-stae/"
       - name: Deploy analysis-1 to prod
         id: deploy_analysis_1_prod
         uses: appleboy/scp-action@master
+        if: needs.pre-build.outputs.analysis_1-is-modified == 'true'
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.HI_USERNAME }}
           password: ${{ secrets.HI_PASSWORD }}
           port: 22
           rm: true
-          strip_components: 2
-          source: artifacts
-          target: ".public_html/staging/greining-1/${{ needs.setup.outputs.branch_name }}"
+          strip_components: 1
+          source: analysis_1/*
+          target: ".public_html/production/greining-1/"
