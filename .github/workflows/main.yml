@@ -97,7 +97,7 @@ jobs:
           ls -al artifacts
       - name: Check for changes
         run: |
-          curl https://notendur.hi.is/jlg2/staging/greining-1/${{ needs.setup.outputs.branch_name }}/.buildinfo -o .prodbuild
+          curl https://notendur.hi.is/jlg2/staging/greining-1/${{ needs.setup.outputs.branch_name }}/.buildinfo -o .prodinfo
           diff .prodinfo artifacts/foundation_build/.buildinfo
           if diff .prodinfo artifacts/foundation_build/.buildinfo >/dev/null 2>&1
           then
@@ -161,7 +161,7 @@ jobs:
           ls -al ${{ github.workspace }}/artifacts
       - name: Check for changes
         run: |
-          curl https://notendur.hi.is/jlg2/staging/greining-1/${{ needs.setup.outputs.branch_name }}/.buildinfo -o .prodbuild
+          curl https://notendur.hi.is/jlg2/staging/greining-1/${{ needs.setup.outputs.branch_name }}/.buildinfo -o .prodinfo
           diff .prodinfo artifacts/analysis_1_build/.buildinfo
           if diff .prodinfo artifacts/analysis_1_build/.buildinfo >/dev/null 2>&1
           then
