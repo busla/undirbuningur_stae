@@ -138,7 +138,6 @@ jobs:
           ls -al artifacts
       - name: zip-build
         id: zip_build
-        if: steps.is_modified.outputs.is-modified == 'true'
         # Use zip instead of tar to support non-tech users that want to download the artifact
         run: |
           echo ${{ github.workspace }}
@@ -154,7 +153,6 @@ jobs:
       #----------------------------------------------
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
-        if: steps.is_modified.outputs.is-modified == 'true'
         with:
           name: artifacts
           path: ${{steps.zip_build.outputs.artifact}}
@@ -208,7 +206,6 @@ jobs:
       #----------------------------------------------
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
-        if: steps.is_modified.outputs.is-modified == 'true'
         with:
           name: artifacts
           path: ${{steps.zip_build.outputs.artifact}}
