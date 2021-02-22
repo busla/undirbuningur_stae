@@ -125,6 +125,7 @@ jobs:
       #----------------------------------------------
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
+        if: steps.is_modified.outputs.is-modified == 'true'
         with:
           name: artifacts
           path: ${{steps.zip_build.outputs.artifact}}
@@ -188,6 +189,7 @@ jobs:
       #----------------------------------------------
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
+        if: steps.is_modified.outputs.is-modified == 'true'
         with:
           name: artifacts
           path: ${{steps.zip_build.outputs.artifact}}
