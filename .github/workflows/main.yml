@@ -105,9 +105,9 @@ jobs:
               echo $dir
             else
                 echo "Changes found in build"
-                project_name=(${dir//\// })
-                echo "::set-output name=$project_name[1]-is-modified::$(echo true)"
-                echo $project_name[1]
+                project_name=$(echo $dir | awk -F'/' '{print $2}')
+                echo "::set-output name=$project_name-is-modified::$(echo true)"
+                echo $project_name
             fi
           done
   build-undirbuningur-stae:
