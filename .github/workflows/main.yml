@@ -100,14 +100,12 @@ jobs:
           for dir in projects/*; do
             git diff HEAD^ HEAD $dir
             if git diff HEAD^ HEAD --exit-code $dir >/dev/null 2>&1
+            project_name=$(echo $dir | awk -F'/' '{print $2}')
             then
-              echo "No changes found in build"
-              echo $dir
+              echo "No changes found in $project_name"
             else
-                echo "Changes found in build"
-                project_name=$(echo $dir | awk -F'/' '{print $2}')
+                echo "Changes found in $project_name"
                 echo "::set-output name=$project_name-is-modified::$(echo true)"
-                echo $project_name
             fi
           done
   build-undirbuningur-stae:
