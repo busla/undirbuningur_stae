@@ -64,6 +64,48 @@ jobs:
       - name: Install dependencies
         run: poetry install
         if: steps.cached_poetry_dependencies.outputs.cache-hit != 'true'
+  pre-build:
+    needs: setup
+    name: Pre-build and validate projects
+    runs-on: ubuntu-20.04
+    outputs:
+      artifact: ${{ steps.zip_build.outputs.artifact }}
+      foundation-is-modified: ${{ steps.is_modified.outputs.foundation-is-modified }}
+      analysis_1-is-modified: ${{ steps.is_modified.outputs.analysis_1-is-modified }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      #----------------------------------------------
+      # load cached venv if cache exists
+      #----------------------------------------------
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+      #----------------------------------------------
+      # Build
+      #----------------------------------------------
+      - name: Build projects
+        id: build_undirbuningur_stae
+        run: |
+          source .venv/bin/activate
+          for dir in projects/*; do
+            if git diff HEAD^ HEAD --exit-code $dir >/dev/null 2>&1
+            then
+              echo "No changes found in build"
+            else
+                echo "Changes found in build"
+                echo "::set-output name=$dir-is-modified::$(echo true)"
+                echo $dir
+            fi
+          done
+          ls -al artifacts
   build-undirbuningur-stae:
     needs: setup
     name: Build undirbuningur-stae
