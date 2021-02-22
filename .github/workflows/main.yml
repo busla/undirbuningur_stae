@@ -70,6 +70,7 @@ jobs:
     runs-on: ubuntu-20.04
     outputs:
       artifact: ${{ steps.zip_build.outputs.artifact }}
+      is-modified: ${{ steps.is_modified.outputs.is-modified }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -96,19 +97,19 @@ jobs:
           sphinx-build -c projects/foundation/ projects/foundation/ artifacts/foundation_build
           ls -al artifacts
       - name: Check for changes
+        id: is_modified
         run: |
           curl https://notendur.hi.is/jlg2/staging/greining-1/${{ needs.setup.outputs.branch_name }}/.buildinfo -o .prodinfo
-          diff .prodinfo artifacts/foundation_build/.buildinfo
           if diff .prodinfo artifacts/foundation_build/.buildinfo >/dev/null 2>&1
           then
-              echo "Files are the same"
-              exit 78
+              echo "No changes found in build"
           else
-              echo "Files are different"
+              echo "Changes found in build"
+              echo "::set-output name=is-modified::$(echo true)"
           fi
       - name: zip-build
         id: zip_build
-        if: ${{ success() }}
+        if: steps.is_modified.outputs.is-modified == 'true'
         # Use zip instead of tar to support non-tech users that want to download the artifact
         run: |
           echo ${{ github.workspace }}
@@ -116,7 +117,7 @@ jobs:
           export BUILD_PREFIX=build-${{ runner.os }}
           export BUILD_HASH=${{ hashFiles('artifacts') }}
           echo ${BUILD_HASH}
-          zip -r "${BUILD_PREFIX}-${BUILD_HASH}" artifacts/*
+          zip -r "undirbuningur-stae-${BUILD_PREFIX}-${BUILD_HASH}" artifacts/*
           ls -al ${{ github.workspace }}
           echo "::set-output name=artifact::$(echo ${BUILD_PREFIX}-${BUILD_HASH}.zip)"
       #----------------------------------------------
@@ -124,7 +125,6 @@ jobs:
       #----------------------------------------------
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
-        if: ${{ success() }}
         with:
           name: artifacts
           path: ${{steps.zip_build.outputs.artifact}}
@@ -134,6 +134,7 @@ jobs:
     runs-on: ubuntu-20.04
     outputs:
       artifact: ${{ steps.zip_build.outputs.artifact }}
+      is-modified: ${{ steps.is_modified.outputs.is-modified }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -162,17 +163,16 @@ jobs:
       - name: Check for changes
         run: |
           curl https://notendur.hi.is/jlg2/staging/greining-1/${{ needs.setup.outputs.branch_name }}/.buildinfo -o .prodinfo
-          diff .prodinfo artifacts/analysis_1_build/.buildinfo
           if diff .prodinfo artifacts/analysis_1_build/.buildinfo >/dev/null 2>&1
           then
-              echo "Files are the same"
-              exit 78
+              echo "No changes found in build"
           else
-              echo "Files are different"
+              echo "Changes found in build"
+              echo "::set-output name=is-modified::$(echo true)"
           fi
       - name: zip-build
         id: zip_build
-        if: ${{ success() }}
+        if: steps.is_modified.outputs.is-modified == 'true'
         # Use zip instead of tar to support non-tech users that want to download the artifact
         run: |
           echo ${{ github.workspace }}
@@ -180,14 +180,13 @@ jobs:
           export BUILD_PREFIX=build-${{ runner.os }}
           export BUILD_HASH=${{ hashFiles('artifacts') }}
           echo ${BUILD_HASH}
-          zip -r "${BUILD_PREFIX}-${BUILD_HASH}" artifacts/*
+          zip -r "greining-1-${BUILD_PREFIX}-${BUILD_HASH}" artifacts/*
           ls -al ${{ github.workspace }}
           echo "::set-output name=artifact::$(echo ${BUILD_PREFIX}-${BUILD_HASH}.zip)"
       #----------------------------------------------
       # Upload build artifact
       #----------------------------------------------
       - name: Upload build artifact
-        if: ${{ success() }}
         uses: actions/upload-artifact@v2
         with:
           name: artifacts
@@ -196,6 +195,7 @@ jobs:
     needs: [setup, build-undirbuningur-stae, build-greining-1]
     name: Tag and release
     runs-on: ubuntu-20.04
+    if: needs.build-undirbuningur-stae.outputs.is-modified == 'true' ||  needs.build-greining-1.outputs.is-modified == 'true'
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -213,10 +213,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: artifacts
-      - name: debug
-        run: |
-          ls -al .
-
       #----------------------------------------------
       # zip build artifact
       #----------------------------------------------
@@ -266,7 +262,7 @@ jobs:
           asset_content_type: application/zip
   deploy-feature-branch:
     needs: [setup, build-greining-1, build-undirbuningur-stae, tag-and-release]
-    if: needs.setup.outputs.branch_name != 'master'
+    if: needs.setup.outputs.branch_name != 'master' && (needs.build-undirbuningur-stae.outputs.is-modified == 'true' ||  needs.build-greining-1.outputs.is-modified == 'true')
     name: Deploy feature branch
     runs-on: ubuntu-20.04
     steps:
@@ -315,7 +311,7 @@ jobs:
           source: analysis_1_build/*
           target: ".public_html/staging/greining-1/${{ needs.setup.outputs.branch_name }}"
   deploy-production-branch:
-    if: needs.setup.outputs.branch_name == 'master'
+    if: needs.setup.outputs.branch_name == 'master' && (needs.build-undirbuningur-stae.outputs.is-modified == 'true' ||  needs.build-greining-1.outputs.is-modified == 'true')
     needs: [setup, tag-and-release]
     name: Deploy production branch
     runs-on: ubuntu-20.04
