@@ -210,8 +210,8 @@ jobs:
           name: artifacts
           path: ${{steps.zip_build.outputs.artifact}}
   deploy-feature-branch:
-    needs: [setup]
-    if: needs.pre-build.outputs.analysis_1-is-modified == 'true' ||  needs.pre-build.outputs.foundation-is-modified == 'true'
+    needs: [setup, build-greining-1, build-undirbuningur-stae]
+    if: ${{ always() }}
     name: Deploy feature branch
     runs-on: ubuntu-20.04
     steps:
