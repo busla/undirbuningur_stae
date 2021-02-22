@@ -147,7 +147,7 @@ jobs:
           echo ${BUILD_HASH}
           zip -r "undirbuningur-stae-${BUILD_PREFIX}-${BUILD_HASH}" artifacts/*
           ls -al ${{ github.workspace }}
-          echo "::set-output name=artifact::$(echo ${BUILD_PREFIX}-${BUILD_HASH}.zip)"
+          echo "::set-output name=artifact::$(echo undirbuningur-stae-${BUILD_PREFIX}-${BUILD_HASH}.zip)"
       #----------------------------------------------
       # Upload build artifact
       #----------------------------------------------
@@ -200,7 +200,7 @@ jobs:
           echo ${BUILD_HASH}
           zip -r "greining-1-${BUILD_PREFIX}-${BUILD_HASH}" artifacts/*
           ls -al ${{ github.workspace }}
-          echo "::set-output name=artifact::$(echo ${BUILD_PREFIX}-${BUILD_HASH}.zip)"
+          echo "::set-output name=artifact::$(echo greining-1-${BUILD_PREFIX}-${BUILD_HASH}.zip)"
       #----------------------------------------------
       # Upload build artifact
       #----------------------------------------------
@@ -211,7 +211,7 @@ jobs:
           path: ${{steps.zip_build.outputs.artifact}}
   deploy-feature-branch:
     needs: [setup, build-greining-1, build-undirbuningur-stae]
-    if: ${{ always() }}
+    if: always() || success()
     name: Deploy feature branch
     runs-on: ubuntu-20.04
     steps:
