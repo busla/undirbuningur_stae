@@ -70,8 +70,8 @@ jobs:
     runs-on: ubuntu-20.04
     outputs:
       artifact: ${{ steps.zip_build.outputs.artifact }}
-      foundation-is-modified: ${{ steps.is_modified.outputs.foundation-is-modified }}
-      analysis_1-is-modified: ${{ steps.is_modified.outputs.analysis_1-is-modified }}
+      foundation-is-modified: ${{ steps.check_for_changes.outputs.foundation-is-modified }}
+      analysis_1-is-modified: ${{ steps.check_for_changes.outputs.analysis_1-is-modified }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -93,8 +93,8 @@ jobs:
       #----------------------------------------------
       # Build
       #----------------------------------------------
-      - name: Build projects
-        id: build_undirbuningur_stae
+      - name: Check for changes
+        id: check_for_changes
         run: |
           source .venv/bin/activate
           for dir in projects/*; do
@@ -105,8 +105,9 @@ jobs:
               echo $dir
             else
                 echo "Changes found in build"
-                echo "::set-output name=$dir-is-modified::$(echo true)"
-                echo $dir
+                project_name=(${dir//\// })
+                echo "::set-output name=$project_name-is-modified::$(echo true)"
+                echo $project_name
             fi
           done
   build-undirbuningur-stae:
