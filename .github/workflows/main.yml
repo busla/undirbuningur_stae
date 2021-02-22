@@ -99,7 +99,7 @@ jobs:
       - name: Check for changes
         id: is_modified
         run: |
-          curl https://notendur.hi.is/jlg2/staging/greining-1/${{ needs.setup.outputs.branch_name }}/.buildinfo -o .prodinfo
+          curl https://notendur.hi.is/jlg2/staging/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}/.buildinfo -o .prodinfo
           if diff .prodinfo artifacts/foundation_build/.buildinfo >/dev/null 2>&1
           then
               echo "No changes found in build"
