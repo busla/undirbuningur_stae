@@ -1,8 +1,8 @@
-name: build-project
-description: 'Build sphinx project'
+name: deploy-feature
+description: Deploy project to HÍ ftp server
 inputs:
-  projects:
-    description: 'sphinx projects dirs'
+  project:
+    description: 'sphinx project dir name'
     required: true
 # outputs:
 #   is-modified:
@@ -17,7 +17,6 @@ runs:
     - name: Build project
       id: build_project
       run: |
-        ls ${{ inputs.projects }}
         source .venv/bin/activate
         sphinx-build -c projects/${{ inputs.project}}/ projects/${{ inputs.project}}/ artifacts/${{ inputs.project}}_build
         ls -al artifacts
