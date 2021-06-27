@@ -1,6 +1,6 @@
 # Makefile for Sphinx documentation
 #f
-# CAche ffdfdgfdfdfdffdffdfdffdfdsffdfddf
+# CAche ffdfdgfdfdfdffdffdfdffdfdsffdfddfdf
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
