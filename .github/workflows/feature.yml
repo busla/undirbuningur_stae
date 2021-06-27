@@ -150,7 +150,7 @@ jobs:
         port: 22
         rm: true
         strip_components: 1
-        source: foundation_build/*
+        source: artifacts/foundation_build/*
         target: ".public_html/staging/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}"
 # deploy-analysis-1:
 #   if: contains(needs.modified-projects.outputs.file_changes , 'analysis_1')
