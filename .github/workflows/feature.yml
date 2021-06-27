@@ -145,16 +145,22 @@ jobs:
     #     rm *.zip
     #     ls -al .
     - name: Deploy docs
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.HI_USERNAME }}
-        password: ${{ secrets.HI_PASSWORD }}
-        port: 22
-        rm: true
-        strip_components: 1
-        source: ./foundation_build/*
-        target: ".public_html/staging/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}"
+      run: |
+        REMOTE_DIR=.public_html/staging/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}
+        echo ${{ secrets.SSH_PRIVATE }} > hi
+        ssh ${{ secrets.HI_USERNAME }}@${{ secrets.SSH_HOST }} "mkdir -p ~/$REMOTE_DIR"
+        scp -i hi foundation_build/* ${{ secrets.HI_USERNAME }}@${{ secrets.SSH_HOST }}:"~$REMOTE_DIR"
+        rm hi
+      # uses: appleboy/scp-action@master
+      # with:
+      #   host: ${{ secrets.SSH_HOST }}
+      #   username: ${{ secrets.HI_USERNAME }}
+      #   password: ${{ secrets.HI_PASSWORD }}
+      #   port: 22
+      #   rm: true
+      #   strip_components: 1
+      #   source: ./foundation_build/*
+      #   target: ".public_html/staging/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}"
 # deploy-analysis-1:
 #   if: contains(needs.modified-projects.outputs.file_changes , 'analysis_1')
 #   needs: [setup, modified-projects]
