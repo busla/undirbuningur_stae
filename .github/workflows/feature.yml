@@ -84,7 +84,7 @@ jobs:
   #         path: .venv
   #         key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
   modified-projects:
-    needs: [setup, pre-build]
+    needs: [setup]
     runs-on: ubuntu-20.04
     outputs:
       file_changes: ${{ steps.file_changes.outputs.files }}
