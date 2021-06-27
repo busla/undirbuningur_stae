@@ -125,7 +125,7 @@ jobs:
     - name: Run foundation build
       uses: ./.github/actions/build-project
       with:
-        project: foundation
+        project: ${{ github.workspace }}/foundation
     # - name: Upload build artifact
     #   uses: actions/upload-artifact@v2
     #   with:
@@ -150,7 +150,7 @@ jobs:
         port: 22
         rm: true
         strip_components: 1
-        source: artifacts/foundation_build/*
+        source: ${{ github.workspace }}/foundation_build/*
         target: ".public_html/staging/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}"
 # deploy-analysis-1:
 #   if: contains(needs.modified-projects.outputs.file_changes , 'analysis_1')
