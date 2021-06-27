@@ -108,10 +108,8 @@ jobs:
     # - name: Run analysis build
     #   if: contains(steps.file_changes.outputs.files , 'analysis_1')
     #   run: ./.github/actions/edbook/scripts.sh build analysis_1
-  build:
-    if: |
-      contains(needs.modified-projects.outputs.file_changes , 'foundation') ||
-      contains(needs.modified-projects.outputs.file_changes , 'analysis_1')
+  deploy-foundation:
+    if: contains(needs.modified-projects.outputs.file_changes , 'foundation')
     needs: [setup, modified-projects]
     runs-on: ubuntu-20.04
     outputs:
@@ -124,57 +122,59 @@ jobs:
       with:
         path: .venv
         key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-    - name: Run build
+    - name: Run foundation build
       uses: ./.github/actions/build-project
       with:
-        project: ${{needs.modified-projects.outputs.file_changes}}
+        project: foundation
     - name: Upload build artifact
       uses: actions/upload-artifact@v2
       with:
         name: artifacts
         path: ${{steps.zip_build.outputs.artifact}}
-  # deploy-feature-branch:
-  #   needs: [setup, modified-projects, foundation]
-  #   name: Deploy foundation feature
-  #   runs-on: ubuntu-20.04
-  #   steps:
-  #     - name: Get build artifact
-  #       uses: actions/download-artifact@v2
-  #       with:
-  #         name: artifacts
-  #     - name: Unzip build
-  #       run: |
-  #         unzip *.zip && mv ${{ github.workspace }}/artifacts/* ${{ github.workspace }}/
-  #         ls -al .
-  #         rm *.zip
-  #         ls -al .
-  #     - name: Deploy foundation docs
-  #       id: deploy_foundation_docs
-  #       uses: appleboy/scp-action@master
-  #       if: needs.pre-build.outputs.foundation-is-modified == 'true'
-  #       with:
-  #         host: ${{ secrets.SSH_HOST }}
-  #         username: ${{ secrets.HI_USERNAME }}
-  #         password: ${{ secrets.HI_PASSWORD }}
-  #         port: 22
-  #         rm: true
-  #         strip_components: 1
-  #         source: foundation_build/*
-  #         target: ".public_html/staging/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}"
-  #     - name: Deploy analysis-1 docs
-  #       id: deploy_analysis_1_docs
-  #       uses: appleboy/scp-action@master
-  #       if: needs.pre-build.outputs.analysis_1-is-modified == 'true'
-  #       with:
-  #         host: ${{ secrets.SSH_HOST }}
-  #         username: ${{ secrets.HI_USERNAME }}
-  #         password: ${{ secrets.HI_PASSWORD }}
-  #         port: 22
-  #         rm: true
-  #         strip_components: 1
-  #         source: analysis_1_build/*
-  #         target: ".public_html/staging/greining-1/${{ needs.setup.outputs.branch_name }}"
-
+    - name: Get build artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: artifacts
+    - name: Unzip build
+      run: |
+        unzip *.zip && mv ${{ github.workspace }}/artifacts/* ${{ github.workspace }}/
+        ls -al .
+        rm *.zip
+        ls -al .
+    - name: Deploy docs
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.HI_USERNAME }}
+        password: ${{ secrets.HI_PASSWORD }}
+        port: 22
+        rm: true
+        strip_components: 1
+        source: foundation_build/*
+        target: ".public_html/staging/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}"
+# deploy-analysis-1:
+#   if: contains(needs.modified-projects.outputs.file_changes , 'analysis_1')
+#   needs: [setup, modified-projects]
+#   runs-on: ubuntu-20.04
+#   outputs:
+#     artifact: ${{ steps.zip_build.outputs.artifact }}
+#   steps:
+#   - uses: actions/checkout@v2
+#   - name: Load cached venv
+#     id: cached-poetry-dependencies
+#     uses: actions/cache@v2
+#     with:
+#       path: .venv
+#       key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+#   - name: Run analysis build
+#     uses: ./.github/actions/build-project
+#     with:
+#       project: analysis_1
+#   - name: Upload build artifact
+#     uses: actions/upload-artifact@v2
+#     with:
+#       name: artifacts
+#       path: ${{steps.zip_build.outputs.artifact}}
 
 
   # build-undirbuningur-stae:

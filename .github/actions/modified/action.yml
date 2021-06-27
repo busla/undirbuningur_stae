@@ -1,14 +1,5 @@
-name: edbook-actions
-description: 'Edbook action pack'
-inputs:
-  subdir:
-    description: 'repo subdir to check for diff'
-    required: false
-    default: ''
-  function:
-    description: 'function to call'
-    required: true
-    default: ''
+name: check-diff
+description: Check what files were modified
 outputs:
   is-modified:
     description: "Are the diffs in current and previous commits"
@@ -16,6 +7,13 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - run: ${{ github.action_path }}/scripts.sh ${{ inputs.function}} ${{ inputs.subdir}}/
+    - run: |
+        if git diff HEAD^ HEAD --exit-code "SUBDIR" >/dev/null 2>&1
+        then
+          echo "No changes found in $SUBDIR"
+        else
+          echo "Changes found in $SUBDIR"
+          echo "::set-output name=is-modified::true"
+        fi
       id: diff
       shell: bash
