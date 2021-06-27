@@ -15,7 +15,7 @@ runs:
     # Build
     #----------------------------------------------
     - name: Build project
-      id: build_${{ inputs.project}}
+      id: build_project
       run: |
         source .venv/bin/activate
         sphinx-build -c projects/${{ inputs.project}}/ projects/${{ inputs.project}}/ artifacts/${{ inputs.project}}_build
