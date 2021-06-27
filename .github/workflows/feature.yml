@@ -127,7 +127,7 @@ jobs:
       run: |
         source .venv/bin/activate
         sphinx-build -c ${{ github.workspace }}/projects/foundation/ ${{ github.workspace }}/projects/foundation/ ${{ github.workspace }}/foundation_build
-        ls -al ${{ github.workspace }}/artifacts
+        ls -al ${{ github.workspace }}/foundation_build
     # - name: Upload build artifact
     #   uses: actions/upload-artifact@v2
     #   with:
