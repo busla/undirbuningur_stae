@@ -128,6 +128,7 @@ jobs:
         source .venv/bin/activate
         sphinx-build -c ${{ github.workspace }}/projects/foundation/ ${{ github.workspace }}/projects/foundation/ ${{ github.workspace }}/foundation_build
         ls -al ${{ github.workspace }}/foundation_build
+        ls -al ./foundation_build
     # - name: Upload build artifact
     #   uses: actions/upload-artifact@v2
     #   with:
@@ -151,7 +152,8 @@ jobs:
         password: ${{ secrets.HI_PASSWORD }}
         port: 22
         rm: true
-        source: foundation_build/*
+        strip_components: 1
+        source: ./foundation_build/*
         target: ".public_html/staging/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}"
 # deploy-analysis-1:
 #   if: contains(needs.modified-projects.outputs.file_changes , 'analysis_1')
