@@ -11,6 +11,7 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - uses: actions/checkout@v2
     - name: Load cached venv
       id: cached-poetry-dependencies
       uses: actions/cache@v2
