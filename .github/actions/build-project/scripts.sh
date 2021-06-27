@@ -5,7 +5,7 @@ function build() {
   local PROJECT="$1"
   source .venv/bin/activate
   sphinx-build -c projects/"$PROJECT"/ projects/"$PROJECT"/ artifacts/"$PROJECT"_build
-  ls -al artifacts
+  ls -al artifacts/artifacts
 }
 function check_diff() {
   local SUBDIR="$1"
