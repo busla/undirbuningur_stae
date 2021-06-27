@@ -112,8 +112,8 @@ jobs:
     if: contains(needs.modified-projects.outputs.file_changes , 'foundation')
     needs: [setup, modified-projects]
     runs-on: ubuntu-20.04
-    outputs:
-      artifact: ${{ steps.zip_build.outputs.artifact }}
+    # outputs:
+    #   artifact: ${{ steps.zip_build.outputs.artifact }}
     steps:
     - uses: actions/checkout@v2
     - name: Load cached venv
@@ -126,21 +126,21 @@ jobs:
       uses: ./.github/actions/build-project
       with:
         project: foundation
-    - name: Upload build artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: artifacts
-        path: ${{steps.zip_build.outputs.artifact}}
-    - name: Get build artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: artifacts
-    - name: Unzip build
-      run: |
-        unzip *.zip && mv ${{ github.workspace }}/artifacts/* ${{ github.workspace }}/
-        ls -al .
-        rm *.zip
-        ls -al .
+    # - name: Upload build artifact
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: artifacts
+    #     path: ${{steps.zip_build.outputs.artifact}}
+    # - name: Get build artifact
+    #   uses: actions/download-artifact@v2
+    #   with:
+    #     name: artifacts
+    # - name: Unzip build
+    #   run: |
+    #     unzip *.zip && mv ${{ github.workspace }}/artifacts/* ${{ github.workspace }}/
+    #     ls -al .
+    #     rm *.zip
+    #     ls -al .
     - name: Deploy docs
       uses: appleboy/scp-action@master
       with:

@@ -1,7 +1,7 @@
 name: build-project
 description: 'Build sphinx project'
 inputs:
-  projects:
+  project:
     description: 'sphinx projects dirs'
     required: true
 # outputs:
