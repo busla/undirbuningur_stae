@@ -2,7 +2,7 @@ name: build-project
 description: 'Build sphinx project'
 inputs:
   project:
-    description: 'sphinx project subdir'
+    description: 'sphinx project dir name'
     required: true
 # outputs:
 #   is-modified:
@@ -21,11 +21,11 @@ runs:
     #----------------------------------------------
     # Build
     #----------------------------------------------
-    - name: Build ${{ inputs.subdir}}
-      id: build_${{ inputs.subdir}}
+    - name: Build ${{ inputs.project}}
+      id: build_${{ inputs.project}}
       run: |
         source .venv/bin/activate
-        sphinx-build -c projects/${{ inputs.subdir}}/ projects/${{ inputs.subdir}}/ artifacts/${{ inputs.subdir}}_build
+        sphinx-build -c projects/${{ inputs.project}}/ projects/${{ inputs.project}}/ artifacts/${{ inputs.project}}_build
         ls -al artifacts
     - name: zip-build
       id: zip_build
@@ -36,9 +36,9 @@ runs:
         export BUILD_PREFIX=build-${{ runner.os }}
         export BUILD_HASH=${{ hashFiles('artifacts') }}
         echo ${BUILD_HASH}
-        zip -r "${{ inputs.subdir}}-${BUILD_PREFIX}-${BUILD_HASH}" artifacts/*
+        zip -r "${{ inputs.project}}-${BUILD_PREFIX}-${BUILD_HASH}" artifacts/*
         ls -al ${{ github.workspace }}
-        echo "::set-output name=artifact::$(echo ${{ inputs.subdir}}-${BUILD_PREFIX}-${BUILD_HASH}.zip)"
+        echo "::set-output name=artifact::$(echo ${{ inputs.project}}-${BUILD_PREFIX}-${BUILD_HASH}.zip)"
     #----------------------------------------------
     # Upload build artifact
     #----------------------------------------------
