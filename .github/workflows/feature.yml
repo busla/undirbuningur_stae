@@ -95,10 +95,16 @@ jobs:
     - id: file_changes
       name: File Changes
       uses: trilom/file-changes-action@v1.2.3
-      with:
-        prNumber: $
-        pushBefore: ''
-        pushAfter: ''
+    - name: test
+      run: |
+        cat $HOME/files.json
+        cat $HOME/files_modified.json
+        cat $HOME/files_added.json
+        cat $HOME/files_removed.json
+        echo '${{ steps.file_changes.outputs.files}}'
+        echo '${{ steps.file_changes.outputs.files_modified}}'
+        echo '${{ steps.file_changes.outputs.files_added}}'
+        echo '${{ steps.file_changes.outputs.files_removed}}'
     - name: Run foundation build
       if: contains(steps.file_changes.outputs.files , '"foundation/')
       run: ./.github/actions/edbook/scripts build foundation
