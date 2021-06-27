@@ -1,0 +1,21 @@
+name: edbook-actions
+description: 'Edbook action pack'
+inputs:
+  subdir:
+    description: 'repo subdir to check for diff'
+    required: false
+    default: ''
+  function:
+    description: 'function to call'
+    required: true
+    default: ''
+outputs:
+  is-modified:
+    description: "Are the diffs in current and previous commits"
+    value: ${{ steps.diff.outputs.is-modified }}
+runs:
+  using: "composite"
+  steps:
+    - run: ${{ github.action_path }}/scripts.sh ${{ inputs.function}} ${{ inputs.subdir}}/
+      id: diff
+      shell: bash
