@@ -11,22 +11,16 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v2
-    - name: Load cached venv
-      id: cached-poetry-dependencies
-      uses: actions/cache@v2
-      with:
-        path: .venv
-        key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
     #----------------------------------------------
     # Build
     #----------------------------------------------
-    - name: Build ${{ inputs.project}}
+    - name: Build project
       id: build_${{ inputs.project}}
       run: |
         source .venv/bin/activate
         sphinx-build -c projects/${{ inputs.project}}/ projects/${{ inputs.project}}/ artifacts/${{ inputs.project}}_build
         ls -al artifacts
+      shell: bash
     - name: zip-build
       id: zip_build
       # Use zip instead of tar to support non-tech users that want to download the artifact
@@ -39,11 +33,4 @@ runs:
         zip -r "${{ inputs.project}}-${BUILD_PREFIX}-${BUILD_HASH}" artifacts/*
         ls -al ${{ github.workspace }}
         echo "::set-output name=artifact::$(echo ${{ inputs.project}}-${BUILD_PREFIX}-${BUILD_HASH}.zip)"
-    #----------------------------------------------
-    # Upload build artifact
-    #----------------------------------------------
-    - name: Upload build artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: artifacts
-        path: ${{steps.zip_build.outputs.artifact}}
+      shell: bash

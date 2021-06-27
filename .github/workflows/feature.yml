@@ -112,6 +112,13 @@ jobs:
     needs: [setup, modified-projects]
     runs-on: ubuntu-20.04
     steps:
+    - uses: actions/checkout@v2
+    - name: Load cached venv
+      id: cached-poetry-dependencies
+      uses: actions/cache@v2
+      with:
+        path: .venv
+        key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
     - name: Run foundation build
       if: contains(needs.modified-projects.outputs.file_changes , 'foundation')
       uses: ./.github/actions/build-project
