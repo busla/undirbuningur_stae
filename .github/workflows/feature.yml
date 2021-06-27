@@ -115,13 +115,13 @@ jobs:
     - name: Run foundation build
       uses: ./.github/actions/edbook/build-project
       with:
-        subdir: foundation
+        project: foundation
       if: contains(needs.modified-projects.outputs.file_changes , 'foundation')
       run: ./.github/actions/edbook/scripts.sh build foundation
     - name: Run analysis build
       uses: ./.github/actions/edbook/build-project
       with:
-        subdir: analysis_1
+        project: analysis_1
       if: contains(needs.modified-projects.outputs.file_changes , 'analysis_1')
       run: ./.github/actions/edbook/scripts.sh build analysis_1
   # build-undirbuningur-stae:
