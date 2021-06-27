@@ -95,6 +95,9 @@ jobs:
     - id: file_changes
       name: File Changes
       uses: trilom/file-changes-action@v1.2.3
+      with:
+        output: ','
+        fileOutput: ','
     - name: test
       run: |
         cat $HOME/files.json
@@ -106,10 +109,10 @@ jobs:
         echo '${{ steps.file_changes.outputs.files_added}}'
         echo '${{ steps.file_changes.outputs.files_removed}}'
     - name: Run foundation build
-      if: contains(steps.file_changes.outputs.files , '"foundation/')
+      if: contains(steps.file_changes.outputs.files , 'foundation')
       run: ./.github/actions/edbook/scripts build foundation
     - name: Run analysis build
-      if: contains(steps.file_changes.outputs.files , '"analysis_1/')
+      if: contains(steps.file_changes.outputs.files , 'analysis_1')
       run: ./.github/actions/edbook/scripts build analysis_1
   # build-undirbuningur-stae:
   #   needs: [setup]
