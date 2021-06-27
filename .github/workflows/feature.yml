@@ -88,7 +88,7 @@ jobs:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
   build:
-    needs: [setup]
+    needs: [setup, pre-build]
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
@@ -101,10 +101,10 @@ jobs:
         pushAfter: ''
     - name: Run foundation build
       if: contains(steps.file_changes.outputs.files , '"foundation/')
-      run: ./.github/actions/edbook/scripts foundation
+      run: ./.github/actions/edbook/scripts build foundation
     - name: Run analysis build
       if: contains(steps.file_changes.outputs.files , '"analysis_1/')
-      run: ./.github/actions/edbook/scripts analysis_1
+      run: ./.github/actions/edbook/scripts build analysis_1
   # build-undirbuningur-stae:
   #   needs: [setup]
   #   name: Build undirbuningur-stae
