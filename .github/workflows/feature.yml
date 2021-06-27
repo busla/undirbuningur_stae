@@ -114,12 +114,12 @@ jobs:
     steps:
     - name: Run foundation build
       if: contains(needs.modified-projects.outputs.file_changes , 'foundation')
-      uses: ./.github/actions/edbook/build-project
+      uses: ./.github/actions/build-project
       with:
         project: foundation
     - name: Run analysis build
       if: contains(needs.modified-projects.outputs.file_changes , 'analysis_1')
-      uses: ./.github/actions/edbook/build-project
+      uses: ./.github/actions/build-project
       with:
         project: analysis_1
   # build-undirbuningur-stae:
