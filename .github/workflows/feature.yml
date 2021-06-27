@@ -125,7 +125,7 @@ jobs:
     - name: Run foundation build
       uses: ./.github/actions/build-project
       with:
-        project: ${{ github.workspace }}/foundation
+        project: foundation
     # - name: Upload build artifact
     #   uses: actions/upload-artifact@v2
     #   with:

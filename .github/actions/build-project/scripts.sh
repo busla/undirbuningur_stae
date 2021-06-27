@@ -3,13 +3,14 @@ set -e
 
 function build() {
   local PROJECT="$1"
+  ls -al "$GITHUB_WORKSPACE"
   source .venv/bin/activate
-  sphinx-build -c "$PROJECT"/ "$PROJECT"/ "$PROJECT"_build
-  ls -al "$PROJECT"_build
+  sphinx-build -c "$GITHUB_WORKSPACE/$PROJECT/" "$GITHUB_WORKSPACE/$PROJECT/" "$GITHUB_WORKSPACE"/artifacts/"$PROJECT"_build
+  ls -al artifacts
 }
 function check_diff() {
   local SUBDIR="$1"
-  if git diff HEAD^ HEAD --exit-code "SUBDIR" >/dev/null 2>&1
+  if git diff HEAD^ HEAD --exit-code "$SUBDIR" >/dev/null 2>&1
   then
     echo "No changes found in $SUBDIR"
   else
