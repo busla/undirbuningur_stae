@@ -1,0 +1,48 @@
+name: build-project
+description: 'Build sphinx project'
+inputs:
+  project:
+    description: 'sphinx project subdir'
+    required: true
+# outputs:
+#   is-modified:
+#     description: "Are the diffs in current and previous commits"
+#     value: ${{ steps.diff.outputs.is-modified }}
+runs:
+  using: "composite"
+  steps:
+    - name: Load cached venv
+      id: cached-poetry-dependencies
+      uses: actions/cache@v2
+      with:
+        path: .venv
+        key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+    #----------------------------------------------
+    # Build
+    #----------------------------------------------
+    - name: Build ${{ inputs.subdir}}
+      id: build_${{ inputs.subdir}}
+      run: |
+        source .venv/bin/activate
+        sphinx-build -c projects/${{ inputs.subdir}}/ projects/${{ inputs.subdir}}/ artifacts/${{ inputs.subdir}}_build
+        ls -al artifacts
+    - name: zip-build
+      id: zip_build
+      # Use zip instead of tar to support non-tech users that want to download the artifact
+      run: |
+        echo ${{ github.workspace }}
+        ls ${{ github.workspace }}/artifacts
+        export BUILD_PREFIX=build-${{ runner.os }}
+        export BUILD_HASH=${{ hashFiles('artifacts') }}
+        echo ${BUILD_HASH}
+        zip -r "${{ inputs.subdir}}-${BUILD_PREFIX}-${BUILD_HASH}" artifacts/*
+        ls -al ${{ github.workspace }}
+        echo "::set-output name=artifact::$(echo ${{ inputs.subdir}}-${BUILD_PREFIX}-${BUILD_HASH}.zip)"
+    #----------------------------------------------
+    # Upload build artifact
+    #----------------------------------------------
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: artifacts
+        path: ${{steps.zip_build.outputs.artifact}}

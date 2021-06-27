@@ -61,35 +61,33 @@ jobs:
       - name: Install dependencies
         run: poetry install
         if: steps.cached_poetry_dependencies.outputs.cache-hit != 'true'
-  pre-build:
-    needs: setup
-    name: Pre-build
-    runs-on: ubuntu-20.04
-    outputs:
-      artifact: ${{ steps.zip_build.outputs.artifact }}
-      foundation-is-modified: ${{ steps.check_for_changes.outputs.foundation-is-modified }}
-      analysis_1-is-modified: ${{ steps.check_for_changes.outputs.analysis_1-is-modified }}
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-      - name: Set up python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-      #----------------------------------------------
-      # load cached venv if cache exists
-      #----------------------------------------------
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v2
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-  build:
+  # dependencies:
+  #   needs: setup
+  #   name: Pre-build
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #     - name: Check out repository
+  #       uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 2
+  #     - name: Set up python
+  #       uses: actions/setup-python@v2
+  #       with:
+  #         python-version: 3.9
+  #     #----------------------------------------------
+  #     # load cached venv if cache exists
+  #     #----------------------------------------------
+  #     - name: Load cached venv
+  #       id: cached-poetry-dependencies
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: .venv
+  #         key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+  modified-projects:
     needs: [setup, pre-build]
     runs-on: ubuntu-20.04
+    outputs:
+      file_changes: ${{ steps.file_changes.outputs.files }}
     steps:
     - uses: actions/checkout@v2
     - id: file_changes
@@ -97,19 +95,34 @@ jobs:
       uses: trilom/file-changes-action@v1.2.3
     - name: test
       run: |
-        cat $HOME/files.json
-        cat $HOME/files_modified.json
-        cat $HOME/files_added.json
-        cat $HOME/files_removed.json
+        echo "modified: " && cat $HOME/files_modified.json
+        echo "added: " && cat $HOME/files_added.json
+        echo "removed: " && cat $HOME/files_removed.json
         echo '${{ steps.file_changes.outputs.files}}'
         echo '${{ steps.file_changes.outputs.files_modified}}'
         echo '${{ steps.file_changes.outputs.files_added}}'
         echo '${{ steps.file_changes.outputs.files_removed}}'
+    # - name: Run foundation build
+    #   if: contains(steps.file_changes.outputs.files , 'foundation')
+    #   run: ./.github/actions/edbook/scripts.sh build foundation
+    # - name: Run analysis build
+    #   if: contains(steps.file_changes.outputs.files , 'analysis_1')
+    #   run: ./.github/actions/edbook/scripts.sh build analysis_1
+  build:
+    needs: [setup, modified-projects]
+    runs-on: ubuntu-20.04
+    steps:
     - name: Run foundation build
-      if: contains(steps.file_changes.outputs.files , 'foundation')
+      uses: ./.github/actions/edbook/build-project
+      with:
+        subdir: foundation
+      if: contains(needs.modified-projects.outputs.file_changes , 'foundation')
       run: ./.github/actions/edbook/scripts.sh build foundation
     - name: Run analysis build
-      if: contains(steps.file_changes.outputs.files , 'analysis_1')
+      uses: ./.github/actions/edbook/build-project
+      with:
+        subdir: analysis_1
+      if: contains(needs.modified-projects.outputs.file_changes , 'analysis_1')
       run: ./.github/actions/edbook/scripts.sh build analysis_1
   # build-undirbuningur-stae:
   #   needs: [setup]
