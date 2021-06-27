@@ -1,15 +1,16 @@
---- #----------------------------------------------
-#----------------------------------------------
-# TODO:
-#   Fix "if" conditions in each job, feels redundant.
-#   There is alot of replication of steps here since Github actions seems limited.
 name: edbook
 on:
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - "**/README.md"
   push:
     paths-ignore:
       - "**/README.md"
     branches-ignore:
       - master
+  workflow_dispatch:
 env:
   DEFAULT_BRANCH: master
 jobs:
@@ -86,34 +87,22 @@ jobs:
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-      #----------------------------------------------
-      # Build
-      #----------------------------------------------
-      - name: Check for changes
-        id: check_for_changes
-        run: |
-          source .venv/bin/activate
-          for dir in projects/*; do
-            project_name=$(echo $dir | awk -F'/' '{print $2}')
-            if git diff HEAD^ HEAD --exit-code $dir >/dev/null 2>&1
-            then
-              echo "No changes found in $project_name"
-            else
-              echo "Changes found in $project_name"
-              echo "::set-output name=$project_name-is-modified::$(echo true)"
-            fi
-          done
   build-undirbuningur-stae:
-    needs: [setup, pre-build]
+    needs: [setup]
     name: Build undirbuningur-stae
     runs-on: ubuntu-20.04
-    if: needs.pre-build.outputs.foundation-is-modified == 'true'
     outputs:
       artifact: ${{ steps.zip_build.outputs.artifact }}
-      is-modified: ${{ steps.is_modified.outputs.is-modified }}
+      is-modified: ${{ steps.check_changes.outputs.is-modified }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
+      - name: Check changes
+        id: check_changes
+        uses: ./.github/actions/check-changes
+        with:
+          subdir: foundation
+          function: check_diff
       - name: Set up python
         uses: actions/setup-python@v2
         with:
