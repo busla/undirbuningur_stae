@@ -154,6 +154,7 @@ jobs:
         strip_components: 1
         source: foundation_build/*
         target: ".public_html/staging/undirbuningur_stae/${{ needs.setup.outputs.branch_name }}"
+        use_insecure_cipher: true
 # deploy-analysis-1:
 #   if: contains(needs.modified-projects.outputs.file_changes , 'analysis_1')
 #   needs: [setup, modified-projects]
