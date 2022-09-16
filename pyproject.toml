@@ -36,7 +36,7 @@ pylint = "^2.6.0"
 black = "^20.8b1"
 rstcheck = "^3.3.1"
 sphinx-autobuild = "^2020.9.1"
-commitizen = "^2.13.0"
+commitizen = "^2.33.1"
 
 [tool.poetry.scripts]
 hicli = "hicli.main:app"
